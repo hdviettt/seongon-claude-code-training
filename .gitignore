@@ -1,0 +1,38 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# Output / build
+dist/
+build/
+out/
+.next/
+node_modules/
+
+# Slide source (binary, không commit; chỉ commit export PDF/MD)
+*.key
+*.pptx
+*.numbers
+
+# Video / large media (lưu Drive/R2, không git)
+*.mp4
+*.mov
+*.zip
+*.tar.gz
+
+# Generated
+.DS_Store
+*.log

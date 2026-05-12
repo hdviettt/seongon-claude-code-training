@@ -290,6 +290,6 @@ Code đang local. Hãy:
 
 ## Kiến thức liên quan
 
-- [`knowledge/02-tech-stack-web-app/deployment.md`](../02-tech-stack-web-app/deployment.md)
-- [`knowledge/02-tech-stack-web-app/source-control.md`](../02-tech-stack-web-app/source-control.md)
-- [`add-database.md`](add-database.md)
+- [`deployment/`](../deployment/)
+- [`source-control/`](../source-control/)
+- [`database/hosted-providers.md`](../database/hosted-providers.md)

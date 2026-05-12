@@ -65,8 +65,8 @@ Tôi đang có Next.js app, hiện hardcode data. Hãy:
 ```
 
 Sau đó đọc:
-- [`add-database.md`](add-database.md) — chọn DB phù hợp.
-- [`add-deployment.md`](add-deployment.md) — deploy lại với DB.
+- [`database/hosted-providers.md`](../database/hosted-providers.md) — chọn DB phù hợp.
+- [`deployment/platforms.md`](../deployment/platforms.md) — deploy lại với DB.
 
 ### Bước 2B — Vite/React: cần BE service riêng
 
@@ -119,13 +119,13 @@ Khi nâng cấp, **đừng làm 1 lần tất cả.** Tách:
 1. Setup DB + 1 endpoint GET đơn giản → test.
 2. Thêm POST → test (form submit lưu được).
 3. Thêm PUT/DELETE → test.
-4. Thêm auth nếu cần (xem [`add-auth.md`](add-auth.md)).
-5. Deploy lại (xem [`add-deployment.md`](add-deployment.md)).
+4. Thêm auth nếu cần (xem [`security/auth.md`](../security/auth.md)).
+5. Deploy lại (xem [`deployment/platforms.md`](../deployment/platforms.md)).
 
 Mỗi bước commit Git riêng → revert dễ khi sai.
 
 ## Kiến thức liên quan
 
-- [`knowledge/02-tech-stack-web-app/backend.md`](../02-tech-stack-web-app/backend.md)
-- [`knowledge/02-tech-stack-web-app/database.md`](../02-tech-stack-web-app/database.md)
-- [`add-database.md`](add-database.md) — decision cụ thể về DB.
+- [`backend/`](../backend/)
+- [`database/`](../database/)
+- [`database/hosted-providers.md`](../database/hosted-providers.md) — decision cụ thể về DB.

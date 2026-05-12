@@ -2,10 +2,10 @@
 
 ## Khi nào học viên cần folder này
 
-- Muốn build 1 web app (blog, landing page, dashboard, công cụ nội bộ, e-commerce).
+- Muốn build 1 web app (blog, landing page, dashboard, e-commerce).
 - Đang đọc code của 1 dự án có sẵn, không hiểu các thành phần.
 - Cần quyết định "dùng công nghệ gì cho idea này?"
-- Nghe Claude Code nói "frontend", "backend", "deploy" mà không biết những từ này nghĩa gì.
+- Cần nâng cấp app hiện tại theo note giảng viên — xem `recipes/`.
 
 ## Tóm tắt
 
@@ -26,34 +26,40 @@ Mọi web app đều có cấu trúc 3 tầng:
 └──────────────────────────────────────────────────────────┘
 ```
 
-Khi build 1 web app với Claude Code, bạn cần biết đủ về cả 3 tầng để **giao việc đúng** — không cần biết viết code, nhưng phải biết "frontend là gì, backend là gì" để Claude hiểu bạn muốn làm gì.
+## Sub-folders
 
-## Files trong folder
+Mỗi folder là 1 mảnh kiến thức tự đủ, có `README.md` overview + file con cho sub-topic.
 
-Đọc theo thứ tự:
+| Folder | Nội dung |
+|---|---|
+| [`lap-trinh-co-ban/`](lap-trinh-co-ban/) | Nền tảng: biến, hàm, kiểu dữ liệu, thư viện |
+| [`frontend/`](frontend/) | Cái user thấy: HTML/CSS/JS, React/Next, Tailwind |
+| [`backend/`](backend/) | Cái xử lý: API, runtime, ORM |
+| [`database/`](database/) | Nơi lưu data: Postgres, hosted providers, migrations |
+| [`security/`](security/) | Auth, validation, rate limit, env vars |
+| [`deployment/`](deployment/) | Đưa code lên Internet: Vercel/Railway, CI/CD, monitoring |
+| [`source-control/`](source-control/) | Git, GitHub, branch, commit |
+| [`recipes/`](recipes/) | Recipe thực chiến: static-to-fullstack, blog admin CMS |
 
-1. [`lap-trinh-co-ban.md`](lap-trinh-co-ban.md) — Nền tảng: biến, hàm, kiểu dữ liệu. Đọc nếu bạn chưa biết gì về lập trình.
-2. [`frontend.md`](frontend.md) — Tầng 1: cái user thấy.
-3. [`backend.md`](backend.md) — Tầng 1: cái xử lý sau khi user click.
-4. [`database.md`](database.md) — Tầng 1: nơi lưu data.
-5. [`security.md`](security.md) — Tầng 2: bảo mật.
-6. [`deployment.md`](deployment.md) — Tầng 3: đưa code lên Internet.
-7. [`source-control.md`](source-control.md) — Tầng 3: Git và GitHub.
+## Thứ tự đọc
+
+Học mới từ đầu: 1 → 2 → 3 → 4 → 5 → 6 → 7.
+Nâng cấp app có sẵn: vào thẳng `recipes/`.
 
 ## Prerequisites
 
-- Đã setup được Claude Code (xem `knowledge/01-setup-claude-code/`).
+- Đã setup được Claude Code (`knowledge/01-setup-claude-code/`).
 
 ## 4 quy tắc khi giao việc tech stack cho Claude Code
 
 1. **Mô tả mục tiêu rõ ràng, không mô tả công nghệ.** Tệ: "làm cho tôi 1 trang Next.js". Tốt: "làm cho tôi 1 trang landing giới thiệu khoá học X, có form thu email".
 
-2. **Để Claude Code quyết stack nếu bạn không có lý do cố định.** Khi build mới, nói "đề xuất stack phù hợp" thay vì bắt buộc.
+2. **Để Claude Code quyết stack nếu bạn không có lý do cố định.**
 
-3. **Khi audit dự án có sẵn, hỏi Claude đọc `package.json` / `requirements.txt` trước.** Đó là nơi Claude biết stack hiện tại.
+3. **Khi audit dự án có sẵn, hỏi Claude đọc `package.json` trước.**
 
 4. **Mỗi tầng có 1 quyết định. Tổng 3-5 quyết định cho 1 web app.** Không quá phức tạp.
 
 ## Khoá học liên quan
 
-Buổi 2 của khoá: [`sessions/buoi-2-tech-stack.md`](../../sessions/buoi-2-tech-stack.md)
+Buổi 2: [`sessions/buoi-2-tech-stack.md`](../../sessions/buoi-2-tech-stack.md)

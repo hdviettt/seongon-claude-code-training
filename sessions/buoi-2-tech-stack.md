@@ -21,7 +21,7 @@ Review các artifact học viên nộp: bài học lập trình cho non-tech (.i
 **Mục tiêu:** Hiểu các khái niệm cốt lõi để đọc code Claude viết.
 
 Tham chiếu kiến thức:
-- [`knowledge/02-tech-stack-web-app/lap-trinh-co-ban.md`](../knowledge/02-tech-stack-web-app/lap-trinh-co-ban.md)
+- [`knowledge/02-tech-stack-web-app/lap-trinh-co-ban/`](../knowledge/02-tech-stack-web-app/lap-trinh-co-ban/)
 
 Cover:
 - Lập trình = con người dùng ngôn ngữ lập trình để hướng dẫn máy tính.
@@ -54,18 +54,18 @@ Cover (mỗi mảnh 8-10 phút):
 
 #### Tầng 1 — Request flow
 
-- [`frontend.md`](../knowledge/02-tech-stack-web-app/frontend.md) — HTML/CSS/JS, React/Next.js, Tailwind, shadcn/ui.
-- [`backend.md`](../knowledge/02-tech-stack-web-app/backend.md) — Node/Python/Go, API, endpoints, ORM.
-- [`database.md`](../knowledge/02-tech-stack-web-app/database.md) — SQL vs NoSQL, Postgres mặc định, hosted DB.
+- [`frontend.md`](../knowledge/02-tech-stack-web-app/frontend/) — HTML/CSS/JS, React/Next.js, Tailwind, shadcn/ui.
+- [`backend.md`](../knowledge/02-tech-stack-web-app/backend/) — Node/Python/Go, API, endpoints, ORM.
+- [`database.md`](../knowledge/02-tech-stack-web-app/database/) — SQL vs NoSQL, Postgres mặc định, hosted DB.
 
 #### Tầng 2 — Security
 
-- [`security.md`](../knowledge/02-tech-stack-web-app/security.md) — HTTPS, Auth (session/JWT/OAuth), Validation, rate limit, env vars.
+- [`security.md`](../knowledge/02-tech-stack-web-app/security/) — HTTPS, Auth (session/JWT/OAuth), Validation, rate limit, env vars.
 
 #### Tầng 3 — Deployment
 
-- [`deployment.md`](../knowledge/02-tech-stack-web-app/deployment.md) — Vercel/Railway/Cloudflare, CI/CD, domain, monitoring.
-- [`source-control.md`](../knowledge/02-tech-stack-web-app/source-control.md) — Git, GitHub, branch, commit, PR.
+- [`deployment.md`](../knowledge/02-tech-stack-web-app/deployment/) — Vercel/Railway/Cloudflare, CI/CD, domain, monitoring.
+- [`source-control.md`](../knowledge/02-tech-stack-web-app/source-control/) — Git, GitHub, branch, commit, PR.
 
 ### Phần 5 — Tổng kết (10 phút)
 

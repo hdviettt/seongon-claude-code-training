@@ -119,7 +119,7 @@ Trả lời "1" / "2" / ... để tôi bắt đầu giúp bạn từng bước.
 
 **Vấn đề:** Mọi data đang hardcode trong component. Form submit không lưu đi đâu.
 **Tác động:** Đây không phải fullstack thật sự. Refresh là mất data.
-**Đọc trước:** [`knowledge/upgrade-paths/static-to-fullstack.md`](../../knowledge/upgrade-paths/static-to-fullstack.md) + [`add-database.md`](../../knowledge/upgrade-paths/add-database.md)
+**Đọc trước:** [`recipes/static-to-fullstack.md`](../../knowledge/02-tech-stack-web-app/recipes/static-to-fullstack.md) + [`database/hosted-providers.md`](../../knowledge/02-tech-stack-web-app/database/hosted-providers.md)
 **Prompt copy-paste cho Claude:**
 ```
 Tôi đang có Next.js 14 app track chi phí du lịch, deploy Vercel. 
@@ -146,7 +146,7 @@ Bắt đầu bằng lên PLAN.md trước.
 
 **Vấn đề:** Ai cũng vào URL được, sửa expense của người khác.
 **Tác động:** Trip có nhiều người → cần phân quyền owner vs viewer.
-**Đọc trước:** [`knowledge/upgrade-paths/add-auth.md`](../../knowledge/upgrade-paths/add-auth.md)
+**Đọc trước:** [`security/auth.md`](../../knowledge/02-tech-stack-web-app/security/auth.md)
 **Prompt copy-paste cho Claude:**
 ```
 Thêm auth cho app: NextAuth + Google OAuth + email magic link.
@@ -161,7 +161,7 @@ Update API routes check auth + permission.
 ##### Gap 3: Form chưa có validation
 
 **Vấn đề:** User gõ số âm vào amount, app crash.
-**Đọc trước:** [`knowledge/02-tech-stack-web-app/security.md`](../../knowledge/02-tech-stack-web-app/security.md)
+**Đọc trước:** [`knowledge/02-tech-stack-web-app/security/`](../../knowledge/02-tech-stack-web-app/security/)
 **Prompt:**
 ```
 Add Zod validation cho form thêm expense. Amount > 0, currency trong [VND, USD, EUR],

@@ -205,5 +205,5 @@ Hiện chưa có auth. Hãy:
 
 ## Kiến thức liên quan
 
-- [`knowledge/02-tech-stack-web-app/security.md`](../02-tech-stack-web-app/security.md)
-- [`add-admin-panel.md`](add-admin-panel.md) — Sau khi có auth, build admin CRUD.
+- [`security/`](../security/)
+- [`recipes/blog-admin-cms.md`](../recipes/blog-admin-cms.md) — Sau khi có auth, build admin CRUD.

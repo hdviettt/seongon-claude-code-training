@@ -8,8 +8,8 @@
 
 ## Prerequisites
 
-- **Phải có auth trước.** Đọc [`add-auth.md`](add-auth.md) nếu chưa có.
-- Phải có DB. Đọc [`add-database.md`](add-database.md) nếu chưa có.
+- **Phải có auth trước.** Đọc [`security/auth.md`](../security/auth.md) nếu chưa có.
+- Phải có DB. Đọc [`database/hosted-providers.md`](../database/hosted-providers.md) nếu chưa có.
 
 ## Cấu trúc admin panel chuẩn
 
@@ -310,6 +310,6 @@ Tôi có Next.js 14 app blog với public read-only. Hãy add admin panel:
 
 ## Kiến thức liên quan
 
-- [`add-auth.md`](add-auth.md) — Phải có auth trước.
-- [`add-database.md`](add-database.md) — Phải có DB trước.
-- [`knowledge/02-tech-stack-web-app/security.md`](../02-tech-stack-web-app/security.md)
+- [`security/auth.md`](../security/auth.md) — Phải có auth trước.
+- [`database/hosted-providers.md`](../database/hosted-providers.md) — Phải có DB trước.
+- [`security/`](../security/)

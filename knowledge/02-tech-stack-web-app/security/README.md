@@ -1,5 +1,8 @@
 # Security — Bảo mật web app
 
+> **Sub-file trong folder này:**
+> - [`auth.md`](auth.md) — Authentication chi tiết (NextAuth, Clerk, OAuth, recipe admin-only auth).
+
 ## Định nghĩa 1 dòng
 
 **Security = đảm bảo data và hành động trên web app không bị kẻ xấu lợi dụng.**

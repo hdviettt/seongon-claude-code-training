@@ -82,4 +82,4 @@ Sau khi Claude làm xong:
 ## Kiến thức liên quan
 
 - [`knowledge/01-setup-claude-code/`](../knowledge/01-setup-claude-code/) — Setup, giao diện cơ bản.
-- [`knowledge/02-tech-stack-web-app/lap-trinh-co-ban.md`](../knowledge/02-tech-stack-web-app/lap-trinh-co-ban.md) — Khái niệm lập trình cơ bản (đọc trước để có ý tưởng).
+- [`knowledge/02-tech-stack-web-app/lap-trinh-co-ban/`](../knowledge/02-tech-stack-web-app/lap-trinh-co-ban/) — Khái niệm lập trình cơ bản (đọc trước để có ý tưởng).

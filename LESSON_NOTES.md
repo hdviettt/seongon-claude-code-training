@@ -28,9 +28,9 @@ Khi học viên có dấu hiệu này → Claude nên đề xuất action này.
 
 | Pattern lỗi | Cách phát hiện | Đọc |
 |---|---|---|
-| Web tĩnh, hardcode data | `package.json` có `next` nhưng không có `pg`/`drizzle`/`prisma` + có array data trong `.tsx` | [`knowledge/upgrade-paths/static-to-fullstack.md`](knowledge/upgrade-paths/static-to-fullstack.md) |
-| Thiếu admin auth | Có `/admin` route nhưng không có `middleware.ts` hoặc `auth.ts` | [`knowledge/upgrade-paths/add-auth.md`](knowledge/upgrade-paths/add-auth.md) |
-| Deploy nhưng API 404 | URL live OK nhưng F12 → Network gọi `/api/*` ra 404 | DB chưa setup hoặc env chưa set — đọc [`add-database.md`](knowledge/upgrade-paths/add-database.md) |
+| Web tĩnh, hardcode data | `package.json` có `next` nhưng không có `pg`/`drizzle`/`prisma` + có array data trong `.tsx` | [`knowledge/02-tech-stack-web-app/recipes/static-to-fullstack.md`](knowledge/02-tech-stack-web-app/recipes/static-to-fullstack.md) |
+| Thiếu admin auth | Có `/admin` route nhưng không có `middleware.ts` hoặc `auth.ts` | [`knowledge/02-tech-stack-web-app/security/auth.md`](knowledge/02-tech-stack-web-app/security/auth.md) |
+| Deploy nhưng API 404 | URL live OK nhưng F12 → Network gọi `/api/*` ra 404 | DB chưa setup hoặc env chưa set — đọc [`add-database.md`](knowledge/02-tech-stack-web-app/database/hosted-providers.md) |
 
 ### Note cá nhân (optional)
 
@@ -83,11 +83,11 @@ Web app phải tick **TẤT CẢ** tiêu chí Critical:
 
 | Pattern lỗi | Cách phát hiện | Action |
 |---|---|---|
-| **Hardcode data trong component** | Array `const posts = [...]` ở `.tsx`, không có `db/`, không có `fetch('/api/...')` | Đọc [`static-to-fullstack.md`](knowledge/upgrade-paths/static-to-fullstack.md). Setup DB + API routes. |
+| **Hardcode data trong component** | Array `const posts = [...]` ở `.tsx`, không có `db/`, không có `fetch('/api/...')` | Đọc [`static-to-fullstack.md`](knowledge/02-tech-stack-web-app/recipes/static-to-fullstack.md). Setup DB + API routes. |
 | **Form submit chỉ `console.log`** | Form `onSubmit` không có `fetch` với POST | Tạo API route POST, refactor form gọi API. Sau đó verify: refresh thấy data. |
 | **DB chỉ là file JSON** | `data/posts.json` được import vào component | Setup DB thật: Postgres + Neon nếu Vercel, Postgres Railway nếu Railway. |
 | **Deploy nhưng API 404** | Production URL load OK, nhưng action lỗi | Check env vars trên dashboard hosting (`DATABASE_URL`, `AUTH_SECRET`). |
-| **Admin area không có auth** | Có `/admin` page, ai cũng vào được | Đọc [`add-auth.md`](knowledge/upgrade-paths/add-auth.md). Setup NextAuth + check email admin. |
+| **Admin area không có auth** | Có `/admin` page, ai cũng vào được | Đọc [`add-auth.md`](knowledge/02-tech-stack-web-app/security/auth.md). Setup NextAuth + check email admin. |
 | **Push secret lên Git** | File `.env` có trong commit history | **KHẨN**: rotate tất cả secret. Add `.env` vào `.gitignore`. Force-push xoá history nếu repo còn private. |
 
 ### Recipe khuyến nghị mặc định

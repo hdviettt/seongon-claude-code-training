@@ -112,9 +112,9 @@ Fix các vấn đề Critical / High trước khi nộp.
 ## Kiến thức liên quan
 
 Toàn bộ folder [`knowledge/02-tech-stack-web-app/`](../knowledge/02-tech-stack-web-app/):
-- [`frontend.md`](../knowledge/02-tech-stack-web-app/frontend.md)
-- [`backend.md`](../knowledge/02-tech-stack-web-app/backend.md)
-- [`database.md`](../knowledge/02-tech-stack-web-app/database.md)
-- [`security.md`](../knowledge/02-tech-stack-web-app/security.md)
-- [`deployment.md`](../knowledge/02-tech-stack-web-app/deployment.md)
-- [`source-control.md`](../knowledge/02-tech-stack-web-app/source-control.md)
+- [`frontend.md`](../knowledge/02-tech-stack-web-app/frontend/)
+- [`backend.md`](../knowledge/02-tech-stack-web-app/backend/)
+- [`database.md`](../knowledge/02-tech-stack-web-app/database/)
+- [`security.md`](../knowledge/02-tech-stack-web-app/security/)
+- [`deployment.md`](../knowledge/02-tech-stack-web-app/deployment/)
+- [`source-control.md`](../knowledge/02-tech-stack-web-app/source-control/)

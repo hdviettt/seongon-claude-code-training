@@ -61,7 +61,7 @@ Pick D1 nếu app nhẹ. Pick Neon qua Hyperdrive nếu cần Postgres.
 
 ### Bạn chưa deploy / deploy chỗ khác?
 
-Đọc [`add-deployment.md`](add-deployment.md) trước, hoặc:
+Đọc [`deployment/platforms.md`](../deployment/platforms.md) trước, hoặc:
 - Test local: SQLite (file `.db` trong project).
 - Production: Postgres + Neon.
 
@@ -221,5 +221,5 @@ Hãy lên kế hoạch + script migration. Tôi sẽ backup trước khi chạy.
 
 ## Kiến thức liên quan
 
-- [`knowledge/02-tech-stack-web-app/database.md`](../02-tech-stack-web-app/database.md)
-- [`add-deployment.md`](add-deployment.md)
+- [`database/`](../database/)
+- [`deployment/platforms.md`](../deployment/platforms.md)

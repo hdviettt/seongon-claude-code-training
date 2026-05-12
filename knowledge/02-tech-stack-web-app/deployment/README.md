@@ -1,5 +1,8 @@
 # Deployment — Đưa code lên Internet
 
+> **Sub-file trong folder này:**
+> - [`platforms.md`](platforms.md) — Recipe deploy chi tiết: Vercel+Neon, Railway, Cloudflare Pages, domain DNS, monitoring.
+
 ## Định nghĩa 1 dòng
 
 **Deployment = đưa code từ máy bạn lên server để người khác truy cập được qua Internet.**

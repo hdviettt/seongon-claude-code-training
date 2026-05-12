@@ -11,14 +11,21 @@ Tra cứu nhanh: chủ đề nào ở đâu.
 - [Troubleshooting khi setup](knowledge/01-setup-claude-code/troubleshooting.md)
 
 ### Lập trình & web app
-- [Lập trình cơ bản: biến, hàm, dữ liệu](knowledge/02-tech-stack-web-app/lap-trinh-co-ban.md)
 - [Tech stack tổng quan](knowledge/02-tech-stack-web-app/README.md)
-- [Frontend](knowledge/02-tech-stack-web-app/frontend.md)
-- [Backend](knowledge/02-tech-stack-web-app/backend.md)
-- [Database](knowledge/02-tech-stack-web-app/database.md)
-- [Security](knowledge/02-tech-stack-web-app/security.md)
-- [Deployment](knowledge/02-tech-stack-web-app/deployment.md)
-- [Source control (Git/Github)](knowledge/02-tech-stack-web-app/source-control.md)
+- [Lập trình cơ bản: biến, hàm, dữ liệu](knowledge/02-tech-stack-web-app/lap-trinh-co-ban/)
+- [Frontend](knowledge/02-tech-stack-web-app/frontend/)
+- [Backend](knowledge/02-tech-stack-web-app/backend/)
+- [Database](knowledge/02-tech-stack-web-app/database/)
+  - [Hosted providers (Neon, Supabase, Railway)](knowledge/02-tech-stack-web-app/database/hosted-providers.md)
+- [Security](knowledge/02-tech-stack-web-app/security/)
+  - [Authentication chi tiết](knowledge/02-tech-stack-web-app/security/auth.md)
+- [Deployment](knowledge/02-tech-stack-web-app/deployment/)
+  - [Platforms chi tiết (Vercel/Railway/CF)](knowledge/02-tech-stack-web-app/deployment/platforms.md)
+- [Source control (Git/Github)](knowledge/02-tech-stack-web-app/source-control/)
+- **Recipes thực chiến:**
+  - [Tổng quan recipes](knowledge/02-tech-stack-web-app/recipes/)
+  - [Web tĩnh → fullstack](knowledge/02-tech-stack-web-app/recipes/static-to-fullstack.md)
+  - [Blog admin CMS (auth + CRUD)](knowledge/02-tech-stack-web-app/recipes/blog-admin-cms.md)
 
 ### Mở rộng Claude Code
 - [Commands hệ thống](knowledge/03-mo-rong-claude-code/commands.md)
@@ -36,14 +43,6 @@ Tra cứu nhanh: chủ đề nào ở đâu.
 - [Remote control: dùng CC trên điện thoại](knowledge/05-tu-dong-hoa/remote-control.md)
 - [Best practice: mindset dùng Claude Code](knowledge/05-tu-dong-hoa/best-practice.md)
 - [Khi Claude Code đắt: alternatives](knowledge/05-tu-dong-hoa/alternatives.md)
-
-### Upgrade paths — Nâng cấp web app
-- [Tổng quan](knowledge/upgrade-paths/README.md)
-- [Web tĩnh → fullstack thật sự](knowledge/upgrade-paths/static-to-fullstack.md)
-- [Thêm Database (Vercel→Neon, Railway→Postgres)](knowledge/upgrade-paths/add-database.md)
-- [Thêm Authentication](knowledge/upgrade-paths/add-auth.md)
-- [Thêm Admin Panel (CRUD)](knowledge/upgrade-paths/add-admin-panel.md)
-- [Deploy lên Production](knowledge/upgrade-paths/add-deployment.md)
 
 ### SKILLs có sẵn trong repo
 - [`/audit-webapp`](.claude/skills/audit-webapp/SKILL.md) — Audit web app học viên dựa trên LESSON_NOTES.md

@@ -1,5 +1,8 @@
 # Database — Nơi lưu data
 
+> **Sub-file trong folder này:**
+> - [`hosted-providers.md`](hosted-providers.md) — Recipe chọn DB hosted (Neon/Supabase/Railway/Vercel Postgres) theo platform deploy.
+
 ## Định nghĩa 1 dòng
 
 **Database (DB) = nơi web app lưu trữ data lâu dài, an toàn, tổ chức được.**

@@ -22,7 +22,7 @@
 - **Decision tree** — quyết theo stack.
 - **Code mẫu** — copy được, không phải pseudocode.
 - **Prompt copy-paste** — đưa cho Claude làm hộ.
-- **⚠️ Cấm** — pattern không nên làm.
+- **Cấm** — pattern không nên làm.
 
 ## Cách dùng kết hợp với SKILL `/audit-webapp`
 

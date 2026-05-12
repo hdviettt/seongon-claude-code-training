@@ -132,6 +132,6 @@ Quan sát Claude có dispatch đúng agent không. Nếu chưa đúng, edit `des
 
 ## Kiến thức liên quan
 
-- [`knowledge/04-agents-memory-hooks/sub-agents.md`](../knowledge/04-agents-memory-hooks/sub-agents.md)
-- [`knowledge/04-agents-memory-hooks/memory.md`](../knowledge/04-agents-memory-hooks/memory.md) — Update CLAUDE.md để biết team.
-- [`knowledge/03-mo-rong-claude-code/skills-co-ban.md`](../knowledge/03-mo-rong-claude-code/skills-co-ban.md) — SKILLs cho agents dùng.
+- [`knowledge/04-agents-memory-hooks/sub-agents/`](../knowledge/04-agents-memory-hooks/sub-agents/)
+- [`knowledge/04-agents-memory-hooks/memory/`](../knowledge/04-agents-memory-hooks/memory/) — Update CLAUDE.md để biết team.
+- [`knowledge/03-mo-rong-claude-code/skills/`](../knowledge/03-mo-rong-claude-code/skills/) — SKILLs cho agents dùng.

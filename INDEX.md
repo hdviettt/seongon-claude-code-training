@@ -5,10 +5,10 @@ Tra cứu nhanh: chủ đề nào ở đâu.
 ## Theo topic
 
 ### Setup & giao diện
-- [Cài Claude Code trên Windows](knowledge/01-setup-claude-code/windows.md)
-- [Cài Claude Code trên Mac](knowledge/01-setup-claude-code/mac.md)
-- [Giao diện cơ bản: commands, @, plan mode, approval](knowledge/01-setup-claude-code/giao-dien-co-ban.md)
-- [Troubleshooting khi setup](knowledge/01-setup-claude-code/troubleshooting.md)
+- [Cài Claude Code trên Windows](knowledge/01-setup-claude-code/cai-dat/windows.md)
+- [Cài Claude Code trên Mac](knowledge/01-setup-claude-code/cai-dat/mac.md)
+- [Giao diện cơ bản: commands, @, plan mode, approval](knowledge/01-setup-claude-code/giao-dien/)
+- [Troubleshooting khi setup](knowledge/01-setup-claude-code/cai-dat/troubleshooting.md)
 
 ### Lập trình & web app
 - [Tech stack tổng quan](knowledge/02-tech-stack-web-app/README.md)
@@ -28,16 +28,16 @@ Tra cứu nhanh: chủ đề nào ở đâu.
   - [Blog admin CMS (auth + CRUD)](knowledge/02-tech-stack-web-app/recipes/blog-admin-cms.md)
 
 ### Mở rộng Claude Code
-- [Commands hệ thống](knowledge/03-mo-rong-claude-code/commands.md)
-- [SKILLs là gì, khi nào dùng](knowledge/03-mo-rong-claude-code/skills-co-ban.md)
-- [Cấu trúc 1 SKILL](knowledge/03-mo-rong-claude-code/cau-truc-skill.md)
-- [Kết nối Claude với thế giới ngoài: API, MCP, CLI](knowledge/03-mo-rong-claude-code/ket-noi-ben-ngoai.md)
-- [Ví dụ SKILL: research](knowledge/03-mo-rong-claude-code/examples/research-skill/)
+- [Commands hệ thống](knowledge/03-mo-rong-claude-code/commands/)
+- [SKILLs là gì, khi nào dùng](knowledge/03-mo-rong-claude-code/skills/)
+- [Cấu trúc 1 SKILL](knowledge/03-mo-rong-claude-code/skills/cau-truc.md)
+- [Kết nối Claude với thế giới ngoài: API, MCP, CLI](knowledge/03-mo-rong-claude-code/ket-noi-ngoai/)
+- [Ví dụ SKILL: research](knowledge/03-mo-rong-claude-code/skills/examples/research-skill/)
 
 ### Agents, Memory, Hooks
-- [Sub-agents](knowledge/04-agents-memory-hooks/sub-agents.md)
-- [Memory: CLAUDE.md và MEMORY.md](knowledge/04-agents-memory-hooks/memory.md)
-- [Hooks](knowledge/04-agents-memory-hooks/hooks.md)
+- [Sub-agents](knowledge/04-agents-memory-hooks/sub-agents/)
+- [Memory: CLAUDE.md và MEMORY.md](knowledge/04-agents-memory-hooks/memory/)
+- [Hooks](knowledge/04-agents-memory-hooks/hooks/)
 
 ### Tự động hoá & alternatives
 - [Remote control: dùng CC trên điện thoại](knowledge/05-tu-dong-hoa/remote-control.md)

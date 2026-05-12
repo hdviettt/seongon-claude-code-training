@@ -22,9 +22,9 @@ Marketer / quản lý / non-tech, lần đầu tiếp xúc Claude Code.
 **Mục tiêu:** Mọi học viên có Claude Code chạy được trên máy.
 
 Tham chiếu kiến thức:
-- [`knowledge/01-setup-claude-code/windows.md`](../knowledge/01-setup-claude-code/windows.md)
-- [`knowledge/01-setup-claude-code/mac.md`](../knowledge/01-setup-claude-code/mac.md)
-- [`knowledge/01-setup-claude-code/troubleshooting.md`](../knowledge/01-setup-claude-code/troubleshooting.md)
+- [`knowledge/01-setup-claude-code/cai-dat/windows.md`](../knowledge/01-setup-claude-code/cai-dat/windows.md)
+- [`knowledge/01-setup-claude-code/cai-dat/mac.md`](../knowledge/01-setup-claude-code/cai-dat/mac.md)
+- [`knowledge/01-setup-claude-code/cai-dat/troubleshooting.md`](../knowledge/01-setup-claude-code/cai-dat/troubleshooting.md)
 
 Activities:
 - Walkthrough cài Git, Terminal, Claude Code, Bun, Python.
@@ -74,7 +74,7 @@ Talking points:
 **Mục tiêu:** Học viên dùng được các phím tắt, lệnh cơ bản, plan mode.
 
 Tham chiếu kiến thức:
-- [`knowledge/01-setup-claude-code/giao-dien-co-ban.md`](../knowledge/01-setup-claude-code/giao-dien-co-ban.md)
+- [`knowledge/01-setup-claude-code/giao-dien/`](../knowledge/01-setup-claude-code/giao-dien/)
 
 Cover:
 - `@` tag file.

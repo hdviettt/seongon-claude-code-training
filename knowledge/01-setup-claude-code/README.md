@@ -15,19 +15,19 @@ Claude Code là **trợ lý AI lập trình dạng dòng lệnh (CLI)** do Anthr
 - Kết nối được với hệ thống ngoài (API, MCP).
 - Lưu context trong file thay vì chỉ trong đoạn chat.
 
-Để bắt đầu, bạn cần:
-1. Tài khoản Claude (Anthropic).
-2. Git.
-3. Terminal.
-4. Claude Code.
-5. Bun và Python (cho các tác vụ phát triển).
+## Sub-folders
 
-## Files trong folder
+| Folder | Nội dung |
+|---|---|
+| [`cai-dat/`](cai-dat/) | Cài Claude Code: Windows, Mac, troubleshooting |
+| [`giao-dien/`](giao-dien/) | Giao diện cơ bản: `@`, `/`, `!`, plan mode, approval, phím tắt |
 
-- `windows.md` — Cài Claude Code trên Windows từng bước.
-- `mac.md` — Cài Claude Code trên Mac từng bước.
-- `giao-dien-co-ban.md` — Sau khi cài xong, làm quen giao diện: lệnh, phím tắt, plan mode, approval.
-- `troubleshooting.md` — Các lỗi thường gặp khi cài.
+## Thứ tự đọc
+
+1. `cai-dat/README.md` — overview cài đặt.
+2. `cai-dat/windows.md` hoặc `cai-dat/mac.md` — theo OS bạn dùng.
+3. `cai-dat/troubleshooting.md` — nếu lỗi.
+4. `giao-dien/README.md` — sau khi cài xong.
 
 ## Prerequisites
 
@@ -35,5 +35,4 @@ Không có. Đây là điểm bắt đầu của khoá.
 
 ## Khoá học liên quan
 
-- Buổi 1 của khoá "Claude Code cho SEO & Ads" tập trung 100% vào nội dung folder này.
-- Xem outline buổi: [`sessions/buoi-1-setup.md`](../../sessions/buoi-1-setup.md)
+Buổi 1: [`sessions/buoi-1-setup.md`](../../sessions/buoi-1-setup.md)

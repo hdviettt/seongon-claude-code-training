@@ -13,18 +13,24 @@ Có 4 cách mở rộng Claude Code:
 
 1. **Commands** — lệnh hệ thống có sẵn (`/compact`, `/init`, `/model`...).
 2. **SKILLs** — kỹ năng bạn tự xây cho Claude Code, gọi bằng `/`.
-3. **MCP / API / CLI** — kết nối Claude với thế giới ngoài (data, tool, platform khác).
+3. **MCP / API / CLI** — kết nối Claude với thế giới ngoài.
 4. **Sub-agents** — đồng nghiệp ảo có context riêng (xem folder `04-`).
 
 Folder này focus 3 cái đầu.
 
-## Files trong folder
+## Sub-folders
 
-1. [`commands.md`](commands.md) — Các lệnh `/` hệ thống có sẵn và khi nào dùng.
-2. [`skills-co-ban.md`](skills-co-ban.md) — SKILLs là gì, khi nào nên build.
-3. [`cau-truc-skill.md`](cau-truc-skill.md) — Cấu trúc 1 SKILL: `SKILL.md` + file đi kèm.
-4. [`ket-noi-ben-ngoai.md`](ket-noi-ben-ngoai.md) — API, MCP, CLI: khác nhau ở đâu, dùng cái nào khi nào.
-5. [`examples/research-skill/`](examples/research-skill/) — Ví dụ thực chiến: SKILL research.
+| Folder | Nội dung |
+|---|---|
+| [`commands/`](commands/) | Các lệnh `/` hệ thống có sẵn: `/compact`, `/init`, `/model`, `/effort`, `/powerup` |
+| [`skills/`](skills/) | SKILLs cơ bản + cấu trúc + ví dụ research-skill |
+| [`ket-noi-ngoai/`](ket-noi-ngoai/) | API vs MCP vs CLI: khác nhau ở đâu, dùng cái nào khi nào |
+
+## Files trong skills/
+
+- `skills/README.md` — SKILLs là gì, khi nào nên build.
+- `skills/cau-truc.md` — Cấu trúc 1 SKILL: `SKILL.md` + file đi kèm.
+- `skills/examples/research-skill/` — Ví dụ SKILL hoàn chỉnh có script Python.
 
 ## Prerequisites
 
@@ -33,4 +39,4 @@ Folder này focus 3 cái đầu.
 
 ## Khoá học liên quan
 
-Buổi 3 của khoá: [`sessions/buoi-3-mo-rong.md`](../../sessions/buoi-3-mo-rong.md)
+Buổi 3: [`sessions/buoi-3-mo-rong.md`](../../sessions/buoi-3-mo-rong.md)

@@ -137,10 +137,10 @@ Phải thấy tên skill là folder, trong folder có `SKILL.md`.
 
 ## Kiến thức liên quan
 
-- [`knowledge/03-mo-rong-claude-code/skills-co-ban.md`](../knowledge/03-mo-rong-claude-code/skills-co-ban.md)
-- [`knowledge/03-mo-rong-claude-code/cau-truc-skill.md`](../knowledge/03-mo-rong-claude-code/cau-truc-skill.md)
-- [`knowledge/03-mo-rong-claude-code/ket-noi-ben-ngoai.md`](../knowledge/03-mo-rong-claude-code/ket-noi-ben-ngoai.md)
-- Ví dụ skill hoàn chỉnh: [`knowledge/03-mo-rong-claude-code/examples/research-skill/`](../knowledge/03-mo-rong-claude-code/examples/research-skill/)
+- [`knowledge/03-mo-rong-claude-code/skills/`](../knowledge/03-mo-rong-claude-code/skills/)
+- [`knowledge/03-mo-rong-claude-code/skills/cau-truc.md`](../knowledge/03-mo-rong-claude-code/skills/cau-truc.md)
+- [`knowledge/03-mo-rong-claude-code/ket-noi-ngoai/`](../knowledge/03-mo-rong-claude-code/ket-noi-ngoai/)
+- Ví dụ skill hoàn chỉnh: [`knowledge/03-mo-rong-claude-code/skills/examples/research-skill/`](../knowledge/03-mo-rong-claude-code/skills/examples/research-skill/)
 
 ## SKILL repos tham khảo
 
@@ -150,4 +150,4 @@ Phải thấy tên skill là folder, trong folder có `SKILL.md`.
 - `claude-seo` — SEO workflows
 - `marketing-skills` — marketing chung
 
-Link đầy đủ trong `knowledge/03-mo-rong-claude-code/skills-co-ban.md`.
+Link đầy đủ trong `knowledge/03-mo-rong-claude-code/skills/`.

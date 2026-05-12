@@ -84,7 +84,7 @@ Ví dụ:
 > 
 > Pattern phổ biến: **sub-agent gọi SKILL**.
 > 
-> Đọc thêm: `knowledge/04-agents-memory-hooks/sub-agents.md`.
+> Đọc thêm: `knowledge/04-agents-memory-hooks/sub-agents/`.
 
 ### "Tại sao Y?"
 
@@ -116,7 +116,7 @@ Nếu học viên hỏi vì gặp lỗi:
 Đây vẫn là Q&A, không phải build. Trả lời:
 - Nguyên nhân thường gặp (1-2 dòng).
 - Cách fix (3-4 bước).
-- Link `knowledge/01-setup-claude-code/troubleshooting.md`.
+- Link `knowledge/01-setup-claude-code/cai-dat/troubleshooting.md`.
 
 ## Cấm
 

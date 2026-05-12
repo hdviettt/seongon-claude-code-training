@@ -24,7 +24,7 @@ Review web app full-stack học viên đã build:
 **Mục tiêu:** Học viên dùng được 5-7 command hệ thống chính.
 
 Tham chiếu:
-- [`knowledge/03-mo-rong-claude-code/commands.md`](../knowledge/03-mo-rong-claude-code/commands.md)
+- [`knowledge/03-mo-rong-claude-code/commands/`](../knowledge/03-mo-rong-claude-code/commands/)
 
 Demo:
 - `/compact` — giảm context khi cuộc trò chuyện dài.
@@ -38,8 +38,8 @@ Demo:
 **Mục tiêu:** Học viên build được 1 SKILL đơn giản.
 
 Tham chiếu:
-- [`knowledge/03-mo-rong-claude-code/skills-co-ban.md`](../knowledge/03-mo-rong-claude-code/skills-co-ban.md)
-- [`knowledge/03-mo-rong-claude-code/cau-truc-skill.md`](../knowledge/03-mo-rong-claude-code/cau-truc-skill.md)
+- [`knowledge/03-mo-rong-claude-code/skills/`](../knowledge/03-mo-rong-claude-code/skills/)
+- [`knowledge/03-mo-rong-claude-code/skills/cau-truc.md`](../knowledge/03-mo-rong-claude-code/skills/cau-truc.md)
 
 Cover:
 - SKILL khác Commands: tự xây vs xây sẵn.
@@ -71,7 +71,7 @@ Cách cài: gửi URL Github cho Claude, bảo nó setup vào `.claude/skills/`.
 ### Phần 5 — Kết nối Claude với thế giới ngoài (40 phút)
 
 Tham chiếu:
-- [`knowledge/03-mo-rong-claude-code/ket-noi-ben-ngoai.md`](../knowledge/03-mo-rong-claude-code/ket-noi-ben-ngoai.md)
+- [`knowledge/03-mo-rong-claude-code/ket-noi-ngoai/`](../knowledge/03-mo-rong-claude-code/ket-noi-ngoai/)
 
 #### API (10 phút)
 - Định nghĩa.

@@ -23,7 +23,7 @@ Review workspace với SKILLs học viên đã build:
 **Mục tiêu:** Học viên hiểu sub-agents và build được 2-3 agents.
 
 Tham chiếu:
-- [`knowledge/04-agents-memory-hooks/sub-agents.md`](../knowledge/04-agents-memory-hooks/sub-agents.md)
+- [`knowledge/04-agents-memory-hooks/sub-agents/`](../knowledge/04-agents-memory-hooks/sub-agents/)
 
 Cover:
 - Định nghĩa: sub-agent = đồng nghiệp ảo có context riêng.
@@ -40,7 +40,7 @@ Hands-on:
 **Mục tiêu:** Học viên setup được CLAUDE.md cho project + biết tắt auto-memory.
 
 Tham chiếu:
-- [`knowledge/04-agents-memory-hooks/memory.md`](../knowledge/04-agents-memory-hooks/memory.md)
+- [`knowledge/04-agents-memory-hooks/memory/`](../knowledge/04-agents-memory-hooks/memory/)
 
 Cover:
 - Memory = thông tin Claude tự load mỗi session mới.
@@ -59,7 +59,7 @@ Hands-on:
 **Mục tiêu:** Học viên hiểu hooks là gì, khi nào dùng, khi nào KHÔNG dùng.
 
 Tham chiếu:
-- [`knowledge/04-agents-memory-hooks/hooks.md`](../knowledge/04-agents-memory-hooks/hooks.md)
+- [`knowledge/04-agents-memory-hooks/hooks/`](../knowledge/04-agents-memory-hooks/hooks/)
 
 Cover:
 - Hook = script tự chạy ở 1 event.

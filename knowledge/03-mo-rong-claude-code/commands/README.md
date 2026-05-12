@@ -73,11 +73,11 @@ Nếu lỡ đóng terminal, mở lại Claude Code, gõ `/resume` để tiếp t
 
 ### `/agents` — Quản lý sub-agents
 
-Xem, tạo, sửa sub-agents (xem `knowledge/04-agents-memory-hooks/sub-agents.md`).
+Xem, tạo, sửa sub-agents (xem `knowledge/04-agents-memory-hooks/sub-agents/`).
 
 ### `/plan` — Bật Plan Mode
 
-Yêu cầu Claude lên kế hoạch chi tiết trước khi thực thi. Xem `knowledge/01-setup-claude-code/giao-dien-co-ban.md` mục "Plan Mode".
+Yêu cầu Claude lên kế hoạch chi tiết trước khi thực thi. Xem `knowledge/01-setup-claude-code/giao-dien/` mục "Plan Mode".
 
 Variant: `/ultraplan` — plan kỹ hơn nữa, dùng cho task siêu lớn.
 
@@ -87,7 +87,7 @@ Hiện số token đã dùng, chi phí ước tính, quota còn lại của plan
 
 ### `/memory` — Quản lý memory
 
-Xem các file memory mà Claude đang auto-load. Tắt auto-memory nếu cần (khuyến nghị tắt — xem `knowledge/04-agents-memory-hooks/memory.md`).
+Xem các file memory mà Claude đang auto-load. Tắt auto-memory nếu cần (khuyến nghị tắt — xem `knowledge/04-agents-memory-hooks/memory/`).
 
 ### `/powerup` — Hướng dẫn các tính năng
 

@@ -48,5 +48,10 @@ claude-code-training/
 
 ## License & quyền
 
-- Default: **private repo**. Materials có thể chứa ví dụ từ SEONGON / khách hàng.
-- Khi public 1 phần (ví dụ open-source cheatsheet), tách ra repo riêng hoặc folder `public/`.
+- Repo này **public** — là 1 content asset của SEONGON, đồng thời là portfolio cá nhân của Việt về Claude Code training.
+- **Không commit** vào repo này:
+  - Tên khách hàng cụ thể chưa được phép công khai.
+  - Số liệu nội bộ SEONGON (doanh thu, headcount cụ thể, P&L).
+  - Credentials, API key, screenshot có thông tin định danh học viên.
+- Khi cần ví dụ "case study", dùng pseudonym hoặc xin phép trước.
+- License code/exercise: MIT (mặc định). License content text (slide, handout): CC BY 4.0 — attribution Việt + SEONGON.

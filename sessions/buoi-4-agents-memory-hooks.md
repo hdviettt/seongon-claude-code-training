@@ -12,13 +12,7 @@
 
 ## Outline
 
-### Phần 1 — Chữa BTVN buổi 3 (20 phút)
-
-Review workspace với SKILLs học viên đã build:
-- Case study tốt: GSC Performance skill kết nối Google Search Console MCP, SEO workspace 11 skills + SerpAPI integration.
-- Lỗi phổ biến nhất: tạo skill nhưng đặt SAI folder (không nằm trong `.claude/skills/<ten>/`). Skill phải nằm đúng folder để được nhận.
-
-### Phần 2 — Sub-agents (50 phút)
+### Phần 1 — Sub-agents (50 phút)
 
 **Mục tiêu:** Học viên hiểu sub-agents và build được 2-3 agents.
 
@@ -35,7 +29,7 @@ Hands-on:
 - Build 1 sub-agent đại diện vai trò công việc của học viên (ví dụ: SEO-specialist, content-writer).
 - Tạo SKILL gọi sub-agent đó.
 
-### Phần 3 — Memory (40 phút)
+### Phần 2 — Memory (40 phút)
 
 **Mục tiêu:** Học viên setup được CLAUDE.md cho project + biết tắt auto-memory.
 
@@ -54,7 +48,7 @@ Hands-on:
 
 ### Giải lao (10 phút)
 
-### Phần 4 — Hooks (40 phút)
+### Phần 3 — Hooks (40 phút)
 
 **Mục tiêu:** Học viên hiểu hooks là gì, khi nào dùng, khi nào KHÔNG dùng.
 
@@ -76,7 +70,7 @@ Cover:
 - Workflow càng hẹp, càng cụ thể, càng hay gặp → càng nên có hook.
 - Nếu giải được bằng SKILL hoặc CLAUDE.md → dùng cái đó, không dùng hook.
 
-### Phần 5 — Tổng kết (20 phút)
+### Phần 4 — Tổng kết (20 phút)
 
 Recap:
 - **Sub-agents** giải bài toán delegation + context bloat.
@@ -87,7 +81,3 @@ Recap:
 ## BTVN
 
 Xem [`exercises/btvn-4-team-agents.md`](../exercises/btvn-4-team-agents.md).
-
-## Slide
-
-`slides/2_Buổi 4 Claude Code cho SEO & Ads.pdf`

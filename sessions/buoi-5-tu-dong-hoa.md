@@ -12,14 +12,7 @@
 
 ## Outline
 
-### Phần 1 — Chữa BTVN buổi 4 (20 phút)
-
-Review team agents học viên đã build. Đánh giá:
-- Sub-agents có description rõ không?
-- SKILLs gọi từ sub-agents có hợp lý không?
-- Khi giao nhiệm vụ lớn, Claude có dispatch đúng sub-agent không?
-
-### Phần 2 — Remote Control (45 phút)
+### Phần 1 — Remote Control (45 phút)
 
 **Mục tiêu:** Học viên dùng được Claude Code từ điện thoại.
 
@@ -37,7 +30,7 @@ Demo:
 - Gõ `/remote-control` trên máy → kết nối app Claude trên điện thoại → giao task → xem Claude làm trên máy.
 - Tạo session mới từ điện thoại với GitHub repo.
 
-### Phần 3 — Best Practice (50 phút)
+### Phần 2 — Best Practice (50 phút)
 
 **Mục tiêu:** Hệ thống hoá những gì đã học sau 4 buổi thành mindset + 10 quy tắc.
 
@@ -53,7 +46,7 @@ Cover:
 
 ### Giải lao (10 phút)
 
-### Phần 4 — Alternatives (35 phút)
+### Phần 3 — Alternatives (35 phút)
 
 **Mục tiêu:** Học viên biết khi nào nên xem xét tool khác.
 
@@ -68,7 +61,7 @@ Cover:
 
 Nhấn mạnh: **học workflow** (SKILLs, agents, hooks, CLAUDE.md), không học tool. Workflow chuyển được, tool có thể thay.
 
-### Phần 5 — Kết thúc khoá (20 phút)
+### Phần 4 — Kết thúc khoá (20 phút)
 
 Recap toàn khoá:
 - Buổi 1 — Setup, hiểu Claude Code là gì.
@@ -83,10 +76,6 @@ Bước tiếp theo cho học viên:
 - Audit workspace 1 lần/tháng.
 
 Q&A.
-
-## Slide
-
-`slides/3_Buổi 5 Claude Code cho SEO & Ads.pdf`
 
 ## Sau khoá học
 

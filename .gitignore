@@ -36,3 +36,6 @@ node_modules/
 # Generated
 .DS_Store
 *.log
+
+# Slides khoá cũ (SEO & Ads) — giữ local, không track
+slides/

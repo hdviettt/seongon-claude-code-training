@@ -12,14 +12,7 @@
 
 ## Outline
 
-### Phần 1 — Chữa BTVN buổi 2 (20 phút)
-
-Review web app full-stack học viên đã build:
-- Case study: app track chi phí du lịch (auth email + Google, deploy Vercel, frontend + backend).
-- Tips từ case: mô tả đầu vào cực kỹ, dùng plan mode, feedback nhiều lượt, yêu cầu audit trước khi production launch.
-- Lỗi phổ biến: cấu trúc folder lộn xộn, không tách rõ frontend/backend, không nhớ folder hiện tại.
-
-### Phần 2 — Commands (30 phút)
+### Phần 1 — Commands (30 phút)
 
 **Mục tiêu:** Học viên dùng được 5-7 command hệ thống chính.
 
@@ -33,7 +26,7 @@ Demo:
 - `/config language` — đổi ngôn ngữ ưu tiên.
 - `/powerup` — hướng dẫn tất cả tính năng chính.
 
-### Phần 3 — SKILLs (45 phút)
+### Phần 2 — SKILLs (45 phút)
 
 **Mục tiêu:** Học viên build được 1 SKILL đơn giản.
 
@@ -58,9 +51,9 @@ Hands-on bài tập:
 
 ### Giải lao (10 phút)
 
-### Phần 4 — Cài SKILL người khác đã build (15 phút)
+### Phần 3 — Cài SKILL người khác đã build (15 phút)
 
-Tham khảo 4 repo SKILLs công khai cho SEO & Ads:
+Tham khảo 4 repo SKILLs công khai:
 - `ui-ux-pro-max` — design UI.
 - `claude-ads` — chạy Ads.
 - `claude-seo` — SEO workflows.
@@ -68,7 +61,7 @@ Tham khảo 4 repo SKILLs công khai cho SEO & Ads:
 
 Cách cài: gửi URL Github cho Claude, bảo nó setup vào `.claude/skills/`.
 
-### Phần 5 — Kết nối Claude với thế giới ngoài (40 phút)
+### Phần 4 — Kết nối Claude với thế giới ngoài (40 phút)
 
 Tham chiếu:
 - [`knowledge/03-mo-rong-claude-code/ket-noi-ngoai/`](../knowledge/03-mo-rong-claude-code/ket-noi-ngoai/)
@@ -89,24 +82,10 @@ Tham chiếu:
 #### So sánh API vs MCP vs CLI (5 phút)
 Bảng so sánh trong knowledge file.
 
-### Phần 6 — Tổng kết (10 phút)
+### Phần 5 — Tổng kết (10 phút)
 
 Recap. Nhấn mạnh: SKILLs + API/MCP/CLI = mở rộng đáng kể năng lực Claude Code.
 
 ## BTVN
 
 Xem [`exercises/btvn-3-workspace-skills.md`](../exercises/btvn-3-workspace-skills.md).
-
-## Slide
-
-`slides/5_Buổi 3 Claude Code cho SEO & Ads.pdf`
-
-## Phản hồi câu hỏi từ học viên (frequently asked)
-
-**Hỏi:** Anh chị thấy dùng Claude Code như nào (ngoài tốn token)?
-
-**Trả lời:** Vẫn cần kỷ luật — không phải gõ là Claude làm. Vẫn cần plan, vẫn cần review. Tốn token là vấn đề có thể giải bằng pattern (sub-agent, compact, đúng model). Vấn đề thật sự là **mindset** — học viên cần tin rằng việc gì Claude cũng làm được, không tự giới hạn.
-
-**Hỏi:** Sau khoá học, có tiếp tục dùng Claude Code (hoặc options tương tự) không?
-
-**Trả lời:** Mục tiêu khoá học không phải để bạn dùng Claude Code. Mục tiêu là **đổi cách bạn làm việc**. Sau này có thể đổi tool (xem `knowledge/05-tu-dong-hoa/alternatives.md`), nhưng workflow (SKILLs, agents, hooks, CLAUDE.md) sẽ giữ nguyên giá trị.

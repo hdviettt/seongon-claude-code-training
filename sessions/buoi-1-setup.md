@@ -97,11 +97,7 @@ Cover:
 
 ## BTVN
 
-Xem [`exercises/btvn-1-lap-trinh-cho-non-tech.md`](../exercises/btvn-1-lap-trinh-cho-non-tech.md).
-
-## Slide
-
-`slides/4_Buổi 1 Claude Code cho SEO & Ads.pdf`
+Giảng viên sẽ giao BTVN trong buổi học. Note giảng viên + tiêu chí đạt sẽ được update trong [`LESSON_NOTES.md`](../LESSON_NOTES.md).
 
 ## Sau buổi học — học viên tự ôn
 

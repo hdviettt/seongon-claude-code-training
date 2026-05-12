@@ -120,8 +120,7 @@ seongon-claude-code-training/
 │       └── alternatives.md
 │
 ├── sessions/               — outline 5 buổi học
-├── exercises/              — 4 BTVN với tiêu chí cụ thể
-└── slides/                 — slide PDF 5 buổi
+└── exercises/              — BTVN với tiêu chí cụ thể (giảng viên sẽ giao trong buổi)
 ```
 
 **Convention:** Mỗi mảnh kiến thức là 1 folder con với `README.md` làm entry point + file con cho sub-topic. Học viên đọc `README.md` đầu tiên, đi sâu khi cần.

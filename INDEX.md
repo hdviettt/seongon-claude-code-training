@@ -68,7 +68,8 @@ Tra cứu nhanh: chủ đề nào ở đâu.
 
 | Sau buổi | BTVN | File |
 |---|---|---|
-| 1 | Bài học lập trình cho non-tech | [exercises/btvn-1-lap-trinh-cho-non-tech.md](exercises/btvn-1-lap-trinh-cho-non-tech.md) |
 | 2 | Web app full-stack | [exercises/btvn-2-web-app-fullstack.md](exercises/btvn-2-web-app-fullstack.md) |
 | 3 | Workspace với SKILLs | [exercises/btvn-3-workspace-skills.md](exercises/btvn-3-workspace-skills.md) |
 | 4 | Team sub-agents | [exercises/btvn-4-team-agents.md](exercises/btvn-4-team-agents.md) |
+
+Sau buổi 1: giảng viên sẽ giao BTVN trong buổi.

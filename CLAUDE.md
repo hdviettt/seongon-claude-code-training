@@ -21,6 +21,9 @@ Khi học viên hỏi về…
 | Commands (`/compact`, `/init`, `/model`), SKILLs, API, MCP, CLI, kết nối ngoài | `knowledge/03-mo-rong-claude-code/` |
 | Sub-agents, CLAUDE.md, MEMORY.md, hooks | `knowledge/04-agents-memory-hooks/` |
 | Dùng CC trên điện thoại, remote control, OpenCode, alternatives | `knowledge/05-tu-dong-hoa/` |
+| "Tôi muốn nâng cấp app", "thêm DB", "thêm auth", "deploy lại" | `knowledge/upgrade-paths/` |
+| "Audit app tôi", "tôi đang thiếu gì" | SKILL `/audit-webapp` |
+| Note buổi học hiện tại, tiêu chí của giảng viên | `LESSON_NOTES.md` (root) |
 | "Buổi X dạy gì?", "ôn buổi N" | `sessions/buoi-N-*.md` |
 | "BTVN buổi N là gì?" | `exercises/btvn-N-*.md` |
 
@@ -30,6 +33,18 @@ Khi học viên hỏi về…
 2. Nếu cần chi tiết, đọc thêm các file con trong folder.
 3. Trả lời ngắn gọn, đúng ý, có ví dụ cụ thể.
 4. Cuối câu trả lời, nói "Đọc thêm: `<path>`" để học viên tự đào sâu nếu muốn.
+
+## Quy trình ĐẶC BIỆT — Khi học viên muốn audit hoặc nâng cấp web app
+
+Trigger: học viên nói "audit app tôi", "tôi đang thiếu gì", "nâng cấp app theo note giảng viên", hoặc gõ `/audit-webapp`.
+
+1. **Đọc `LESSON_NOTES.md` ở root repo trước.** Đây là source of truth cho buổi học hiện tại. Tiêu chí trong đó là thứ cần đối chiếu.
+2. **Đọc repo của học viên** (folder họ chỉ hoặc folder hiện tại nếu họ đang trong đó). Đọc `package.json`, file structure, `.env.example`, các file quan trọng.
+3. **Chạy SKILL `/audit-webapp`** — skill đóng gói toàn bộ flow audit.
+4. Output theo `report-template.md` của skill: stack hiện tại → đối chiếu LESSON_NOTES → gaps phân priority → action plan cụ thể với prompt copy-paste-chạy-được.
+5. Hỏi học viên chọn action nào → bắt đầu làm từng bước.
+
+Khi gặp gap, **luôn link đến file trong `knowledge/upgrade-paths/`** — đó là nơi có decision tree cụ thể.
 
 ## Quy trình khi học viên muốn LÀM một thứ
 

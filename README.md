@@ -44,6 +44,24 @@ Vào folder `sessions/` — mỗi file là outline 1 buổi, link sang các topi
 
 Vào folder `knowledge/`, mở thẳng các file `.md`. Mỗi folder là 1 mảnh kiến thức tự đủ.
 
+### Cách 4 — Audit & nâng cấp web app của bạn (cho học viên đang làm BTVN)
+
+Bạn đã nộp BTVN buổi 2 (web app fullstack). Giảng viên note bạn cần nâng cấp gì → dùng:
+
+1. `git pull` để có `LESSON_NOTES.md` mới nhất (giảng viên update mỗi buổi).
+2. Mở Claude Code ở folder repo training này.
+3. Gõ:
+   ```
+   /audit-webapp
+   ```
+   Hoặc:
+   ```
+   Đọc LESSON_NOTES.md của khoá. Audit repo web app tôi ở folder ../my-webapp. 
+   Ra action plan nâng cấp.
+   ```
+4. Claude trả lời report với gaps + action plan cụ thể, mỗi action có prompt copy-paste-chạy-được.
+5. Chọn action → Claude hỗ trợ làm từng bước.
+
 ## Cấu trúc
 
 ```

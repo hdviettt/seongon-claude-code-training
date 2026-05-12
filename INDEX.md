@@ -37,6 +37,20 @@ Tra cứu nhanh: chủ đề nào ở đâu.
 - [Best practice: mindset dùng Claude Code](knowledge/05-tu-dong-hoa/best-practice.md)
 - [Khi Claude Code đắt: alternatives](knowledge/05-tu-dong-hoa/alternatives.md)
 
+### Upgrade paths — Nâng cấp web app
+- [Tổng quan](knowledge/upgrade-paths/README.md)
+- [Web tĩnh → fullstack thật sự](knowledge/upgrade-paths/static-to-fullstack.md)
+- [Thêm Database (Vercel→Neon, Railway→Postgres)](knowledge/upgrade-paths/add-database.md)
+- [Thêm Authentication](knowledge/upgrade-paths/add-auth.md)
+- [Thêm Admin Panel (CRUD)](knowledge/upgrade-paths/add-admin-panel.md)
+- [Deploy lên Production](knowledge/upgrade-paths/add-deployment.md)
+
+### SKILLs có sẵn trong repo
+- [`/audit-webapp`](.claude/skills/audit-webapp/SKILL.md) — Audit web app học viên dựa trên LESSON_NOTES.md
+
+### File giảng viên update
+- [`LESSON_NOTES.md`](LESSON_NOTES.md) — Note cho buổi học hiện tại + tiêu chí audit
+
 ## Theo buổi học
 
 | Buổi | Topic chính | Outline |

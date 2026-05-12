@@ -44,7 +44,22 @@ Vào folder `sessions/` — mỗi file là outline 1 buổi, link sang các topi
 
 Vào folder `knowledge/`, mở thẳng các file `.md`. Mỗi folder là 1 mảnh kiến thức tự đủ.
 
-### Cách 4 — Audit & nâng cấp web app của bạn (cho học viên đang làm BTVN)
+### Cách 4 — Hỏi giảng viên ảo / nhờ trợ lý ảo build sản phẩm
+
+Repo có 2 sub-agent có thể gọi:
+
+- **`giang-vien`** — giải đáp khái niệm, giải thích dễ hiểu.
+  ```
+  Tôi muốn hiểu sub-agents khác SKILLs ở đâu. Dùng agent giang-vien.
+  ```
+- **`tro-ly`** — hỗ trợ build sản phẩm theo nhu cầu.
+  ```
+  Tôi muốn build blog cá nhân fullstack. Dùng agent tro-ly để giúp.
+  ```
+
+Hoặc bạn không cần nói rõ agent — Claude Code main sẽ tự dispatch dựa vào câu hỏi (giải thích → giảng viên, build → trợ lý).
+
+### Cách 5 — Audit & nâng cấp web app của bạn (cho học viên đang làm BTVN)
 
 Bạn đã nộp BTVN buổi 2 (web app fullstack). Giảng viên note bạn cần nâng cấp gì → dùng:
 

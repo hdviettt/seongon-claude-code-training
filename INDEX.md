@@ -44,6 +44,10 @@ Tra cứu nhanh: chủ đề nào ở đâu.
 - [Best practice: mindset dùng Claude Code](knowledge/05-tu-dong-hoa/best-practice.md)
 - [Khi Claude Code đắt: alternatives](knowledge/05-tu-dong-hoa/alternatives.md)
 
+### Agents có sẵn trong repo
+- [`giang-vien`](.claude/agents/giang-vien.md) — Giảng viên ảo. Giải đáp khái niệm, giải thích dễ hiểu.
+- [`tro-ly`](.claude/agents/tro-ly.md) — Trợ lý ảo. Hỗ trợ build sản phẩm, plan + execute từng bước.
+
 ### SKILLs có sẵn trong repo
 - [`/audit-webapp`](.claude/skills/audit-webapp/SKILL.md) — Audit web app học viên dựa trên LESSON_NOTES.md
 

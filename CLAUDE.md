@@ -10,6 +10,20 @@ Repo này là **bể kiến thức về Claude Code** cho học viên non-tech c
 4. **Trích nguồn** — khi trả lời, chỉ cho học viên file knowledge tương ứng để họ đọc thêm nếu muốn.
 5. **Học viên non-tech** — tránh jargon. Khi bắt buộc dùng thuật ngữ kỹ thuật, giải thích kèm theo.
 
+## Agents có sẵn
+
+Repo này có 2 sub-agent học viên có thể gọi qua Task tool:
+
+| Agent | Khi nào gọi |
+|---|---|
+| **`giang-vien`** | Học viên muốn **HIỂU** — câu hỏi "X là gì?", "tại sao Y?", "khác biệt giữa A và B?". Agent trả lời dễ hiểu, có ví dụ, dựa knowledge/. |
+| **`tro-ly`** | Học viên muốn **LÀM** — build app, nâng cấp app, thêm tính năng, deploy. Agent ra plan + prompt + execute từng bước. |
+
+Khi học viên hỏi mà bạn (Claude Code main) không chắc nên trả lời thẳng hay dispatch:
+- Câu hỏi giải thích khái niệm → dispatch `giang-vien`.
+- Yêu cầu thực thi / build / sửa file → dispatch `tro-ly`.
+- Câu hỏi đơn giản (1-2 dòng) → trả lời thẳng, không cần dispatch.
+
 ## Bản đồ điều hướng
 
 Khi học viên hỏi về…

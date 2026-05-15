@@ -191,6 +191,23 @@ Sau đó re-run Step 4 (user phải re-grant).
 **Cause**: Refresh token được cấp với scope cũ, code đang gọi API cần scope mới.
 **Fix**: Như "401 cause 2" — thêm scope + re-run OAuth.
 
+### Google Ads API: `DEVELOPER_TOKEN_NOT_APPROVED`
+
+**Full error**: `"The developer token is only approved for use with test accounts. To access non-test accounts, apply for Basic Access."`
+
+**Cause**: Developer token đang ở **Test Access** level (mặc định mới apply). Test tokens chỉ work với test Ads accounts, KHÔNG access production accounts.
+
+**Gotcha**: `listAccessibleCustomers` WORK với Test token (return IDs OK), nhưng query data của chúng FAIL với error này. Đây là discovery vs data distinction — test enough cho enumeration, không đủ data work.
+
+**Fix**:
+1. Vào MCC → Admin → API Center → trang token
+2. Click **"Apply for Basic Access"**
+3. Fill form (use case, expected traffic)
+4. Google review 1-2 business days → email confirm
+5. Token tự upgrade → call API lại work
+
+Xem chi tiết: `references/scopes-explained.md` mục "Developer-token — 3 access levels".
+
 ---
 
 ## Runtime errors (sau khi setup xong)

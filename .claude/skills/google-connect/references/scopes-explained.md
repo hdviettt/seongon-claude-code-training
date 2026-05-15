@@ -126,13 +126,36 @@ Mỗi Google API có yêu cầu khác nhau. OAuth scope ĐỦ cho phần lớn A
 
 1. Phải có **Manager account (MCC)** — không phải individual Ads account. Tạo free tại https://ads.google.com/home/tools/manager-accounts/
 2. Login MCC → **Admin** (top-right wrench icon) → **SETUP** → **API Center**
-3. Apply form → Google review 1-3 ngày → status "Test" (free tier, 15k ops/day) hoặc "Standard" (production)
+3. Apply form → Google cấp token NGAY (instant) ở **Test Access** level
 4. Copy token → `.env`:
    ```env
    GOOGLE_ADS_DEVELOPER_TOKEN=xxx
    GOOGLE_ADS_LOGIN_CUSTOMER_ID=1234567890  # MCC customer ID, no dashes
    ```
 5. Khi call API, send header `developer-token` + (optional) `login-customer-id`
+
+### Developer-token — 3 access levels (gotcha quan trọng)
+
+Token mới apply mặc định ở **Test Access**. Test KHÔNG access được production Ads accounts — đây là gotcha hay miss.
+
+| Level | Apply | Limit | Ads accounts work |
+|---|---|---|---|
+| **Test** (default) | Instant khi apply | Unlimited ops | CHỈ test accounts |
+| **Basic** | Form + Google review 1-2 ngày | 15.000 ops/day | Production accounts |
+| **Standard** | Form + Google review | Unlimited | Production accounts |
+
+**Test mode gotcha**: `customers:listAccessibleCustomers` WORK với Test token (return account IDs), nhưng query data của chúng (vd `customer.descriptiveName`, campaign data, metrics) FAIL với error `DEVELOPER_TOKEN_NOT_APPROVED`. Test enough cho discovery/enumeration, KHÔNG đủ cho production work.
+
+Phần lớn use case SEONGON (read campaign data, metrics, modify ads) → cần **Basic Access** (free, 1-2 ngày approve).
+
+**Upgrade Test → Basic**:
+1. API Center → trang token detail
+2. Click **"Apply for Basic Access"**
+3. Fill form: use case, expected daily traffic, integration purpose
+4. Google review 1-2 business days → email confirm
+5. Token tự upgrade level (no re-copy needed)
+
+**Verify token level**: call API thử với production account → nếu error `DEVELOPER_TOKEN_NOT_APPROVED` → token vẫn Test. Nếu return data → Basic+ approved.
 
 ### GSC — site ownership requirement
 

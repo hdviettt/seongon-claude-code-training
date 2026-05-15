@@ -27,7 +27,7 @@ KHÔNG dùng skill này khi:
 
 | Setting | Default | Override khi |
 |---|---|---|
-| Model | `google/veo-3.0-fast` | Quality cao hơn → `google/veo-3.0` hoặc `openai/sora-2-pro`; Cheap hơn → `kwaivgI/kling-2.1-standard` |
+| Model | `google/veo-3.0` (premium quality, native audio) | Faster + cheaper → `google/veo-3.0-fast`; alternative → `openai/sora-2-pro`, `kwaivgI/kling-2.1-master` |
 | Aspect ratio | `16:9` (landscape, 1920×1080) | Mobile vertical → `9:16` (1080×1920) |
 | Output dir | `output/videos/` | User chỉ định khác |
 | Polling interval | 15s | Don't override (rate limit) |
@@ -112,7 +112,7 @@ Khi `status: completed`, response có:
 }
 ```
 
-Script download URL + save to `output/videos/<slug>-<timestamp>.mp4`. Cũng save metadata JSON với cost + size + duration + job_id.
+Script download URL + save to `output/videos/<slug>-<timestamp>.mp4`. KHÔNG tạo metadata JSON sidecar — info trả về qua stdout JSON cho parent process.
 
 ### Step 6 — Report
 
@@ -121,11 +121,9 @@ Video generated successfully:
 
 output/videos/<slug>-20260515.mp4 (8s, 1920×1080, ~14MB)
 
-Model: google/veo-3.0-fast
-Cost: $0.80
-Total time: 3.5 phút
-
-Metadata: output/videos/<slug>-20260515.json
+Model: google/veo-3.0
+Cost: $1.20
+Total time: 4 phút
 
 Lưu ý: URL Together expire 24h. File đã save local persistent.
 ```
@@ -188,8 +186,8 @@ Lưu ý: URL Together expire 24h. File đã save local persistent.
 Trước khi report Step 6:
 - [ ] MP4 file exists ở `output/videos/<slug>.mp4`
 - [ ] File size 2-50MB
-- [ ] Metadata JSON đủ field (cost, size, duration, job_id)
 - [ ] Total time logged
+- [ ] Cost reported
 - [ ] Path absolute trong report
 
 ## Voice rules

@@ -25,7 +25,7 @@ KHÔNG dùng skill này khi:
 
 | Setting | Default | Override khi |
 |---|---|---|
-| Model | `black-forest-labs/FLUX.1-schnell` (FREE) | User cần quality cao → `FLUX.1.1-pro` (~$0.04/image) hoặc `FLUX.2-pro` |
+| Model | `black-forest-labs/FLUX.1-kontext-max` (premium quality, supports text-to-image + image-to-image) | Quick test free → `FLUX.1-schnell`; quality cao hơn → `FLUX.2-max` |
 | Dimensions | 1024×1024 | User chỉ định (vd 1920×1080, 1080×1920, etc.) |
 | Steps | 4 (schnell) hoặc 28 (dev/pro) | Cao hơn = chất lượng tăng nhưng chậm + tốn credit |
 | Number of images | 1 | User muốn nhiều variation → 2-4 |
@@ -98,19 +98,7 @@ Script download URL + save to `output/images/<slug>.jpg`:
 - Slug = first 50 chars của prompt, kebab-case, ASCII
 - Vd: "Banner cho khoá AI" → `banner-cho-khoa-ai-20260515.jpg`
 
-Cũng save metadata JSON cạnh image:
-```json
-{
-  "prompt": "...",
-  "model": "...",
-  "dimensions": "1024x1024",
-  "seed": null,
-  "n": 1,
-  "url_original": "https://api.together.ai/shrt/...",
-  "generated_at": "2026-05-15T10:30:00Z",
-  "file_size_bytes": 13247
-}
-```
+Skill KHÔNG tạo metadata JSON sidecar — info trả về qua stdout JSON cho parent process xử lý nếu cần.
 
 ### Step 5 — Report
 
@@ -121,7 +109,7 @@ Generated N image(s):
    Model: <model>, 1024x1024, 13KB
    Prompt: "<first 80 chars>..."
 
-Mở file để xem. Metadata tại output/images/<slug>-001.json
+Mở file để xem.
 ```
 
 Output path absolute để user click mở được trực tiếp (CC IDE integration).
@@ -183,7 +171,6 @@ Output path absolute để user click mở được trực tiếp (CC IDE integr
 Trước khi report Step 5:
 - [ ] Image file tồn tại tại `output/images/<slug>.jpg`
 - [ ] File size > 5KB (tránh case API trả empty image)
-- [ ] Metadata JSON cạnh image, có đủ field
 - [ ] Path absolute trong report (user click mở được)
 - [ ] N images = N tương ứng với request
 

@@ -107,7 +107,7 @@ def download_image(url, dest_path):
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--prompt", required=True)
-    p.add_argument("--model", default="black-forest-labs/FLUX.1-schnell")
+    p.add_argument("--model", default="black-forest-labs/FLUX.1-kontext-max")
     p.add_argument("--width", type=int, default=1024)
     p.add_argument("--height", type=int, default=1024)
     p.add_argument("--steps", type=int, default=None, help="Default: 4 cho schnell, 28 cho dev/pro/max")
@@ -151,26 +151,13 @@ def main():
     for i, url in enumerate(urls, 1):
         suffix = f"-{i:03d}" if len(urls) > 1 else ""
         img_path = out_dir / f"{base_slug}{suffix}.jpg"
-        meta_path = out_dir / f"{base_slug}{suffix}.json"
 
         size = download_image(url, img_path)
-        meta = {
-            "prompt": args.prompt,
-            "model": args.model,
-            "dimensions": f"{args.width}x{args.height}",
-            "steps": args.steps,
-            "n_total": len(urls),
-            "n_this": i,
-            "url_original": url,
-            "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-            "file_size_bytes": size,
-        }
-        meta_path.write_text(json.dumps(meta, indent=2, ensure_ascii=False), encoding="utf-8")
         results.append({"path": str(img_path), "size": size})
         print(f"[generate] OK: {img_path} ({size}B)", file=sys.stderr)
 
-    # JSON output cho parent process
-    print(json.dumps({"images": results, "out_dir": str(out_dir)}, ensure_ascii=False))
+    # JSON output cho parent process (chỉ stdout, không ghi file)
+    print(json.dumps({"images": results, "out_dir": str(out_dir), "model": args.model, "prompt": args.prompt}, ensure_ascii=False))
 
 
 if __name__ == "__main__":

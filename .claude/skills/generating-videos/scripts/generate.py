@@ -60,15 +60,18 @@ def slugify(s, maxlen=50):
 
 def submit_job(api_key, prompt, model, aspect):
     """POST /v2/videos, return job_id."""
+    # Map aspect to explicit width/height (veo-3.0 yêu cầu width+height tách rời, không phải `size`)
+    if aspect == "9:16":
+        w, h = 1080, 1920
+    else:  # 16:9 default
+        w, h = 1920, 1080
+
     body_dict = {
         "model": model,
         "prompt": prompt,
+        "width": w,
+        "height": h,
     }
-    # Aspect ratio - Together API can derive from size, or pass directly
-    if aspect == "9:16":
-        body_dict["size"] = "1080x1920"
-    elif aspect == "16:9":
-        body_dict["size"] = "1920x1080"
 
     body = json.dumps(body_dict).encode("utf-8")
     req = urllib.request.Request(
@@ -145,8 +148,8 @@ def download_video(url, dest_path):
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--prompt", required=True)
-    p.add_argument("--model", default="google/veo-3.0-fast",
-                   help="google/veo-3.0-fast, google/veo-3.0, google/veo-3.0-audio, openai/sora-2, kwaivgI/kling-2.1-standard, etc.")
+    p.add_argument("--model", default="google/veo-3.0",
+                   help="google/veo-3.0 (default), google/veo-3.0-fast, google/veo-3.0-audio, openai/sora-2, kwaivgI/kling-2.1-standard, etc.")
     p.add_argument("--aspect", default="16:9", choices=["16:9", "9:16"])
     p.add_argument("--output-dir", default="output/videos")
     args = p.parse_args()
@@ -184,27 +187,12 @@ def main():
     timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     base = f"{slug}-{timestamp}"
     mp4_path = out_dir / f"{base}.mp4"
-    meta_path = out_dir / f"{base}.json"
 
     size = download_video(video_url, mp4_path)
-    meta = {
-        "prompt": args.prompt,
-        "model": args.model,
-        "aspect_ratio": args.aspect,
-        "size": result.get("size", "?"),
-        "duration_seconds": result.get("seconds", "?"),
-        "job_id": job_id,
-        "cost_usd": cost,
-        "created_at": result.get("created_at"),
-        "completed_at": result.get("completed_at"),
-        "video_url_original": video_url,
-        "saved_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        "file_size_bytes": size,
-    }
-    meta_path.write_text(json.dumps(meta, indent=2, ensure_ascii=False), encoding="utf-8")
 
     print(f"[generate] OK: {mp4_path} ({size/1024/1024:.1f}MB)", file=sys.stderr)
-    print(json.dumps({"video": str(mp4_path), "metadata": str(meta_path), "size_bytes": size, "cost_usd": cost}, ensure_ascii=False))
+    # Stdout JSON cho parent process (không ghi file metadata)
+    print(json.dumps({"video": str(mp4_path), "size_bytes": size, "cost_usd": cost, "model": args.model, "duration": result.get("seconds")}, ensure_ascii=False))
 
 
 if __name__ == "__main__":

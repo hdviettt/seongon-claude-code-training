@@ -84,19 +84,23 @@ Lark có sẵn official MCP — phí phạm nếu reinvent.
 
 `google-connect` skill viết custom Python scripts (`oauth_refresh.py`, hook PostToolUse) vì Google KHÔNG có official MCP server cho non-enterprise users.
 
-`lark-connect` skill chỉ wrap official MCP — đơn giản hơn nhiều.
+`lark-connect` skill wrap official lark-mcp + dùng **tenant mode** — không cần OAuth flow, đơn giản hơn nhiều.
 
-| Aspect | google-connect | lark-connect |
+| Aspect | google-connect | lark-connect (tenant mode) |
 |---|---|---|
-| OAuth flow code | Custom `oauth_refresh.py` (~100 lines) | `lark-mcp login` (1 command) |
+| Authentication | OAuth user flow (custom Python ~100 lines) | tenant_access_token (lark-mcp tự handle) |
 | Token refresh | Custom hook PostToolUse | lark-mcp internal |
 | API calls | Claude generate Python code → run | Claude call MCP tool directly |
 | Config file | `.env` only | `.env` + `.mcp.json` |
+| Browser OAuth | YES (mỗi lần token expire) | NO (tenant mode bypass) |
 | Restart needed | No | YES (sau khi `.mcp.json` thay đổi) |
-| Tools count | Whatever user code | 50+ official |
+| Tools count | Whatever user code | 17 default (200+ available custom) |
+| Setup time | 10-15 phút | 5-7 phút |
 
-google-connect = lower-level (raw HTTP) — phù hợp khi MCP không có.
-lark-connect = higher-level (MCP) — phù hợp khi MCP có sẵn.
+google-connect = OAuth user mode (read personal data).
+lark-connect = tenant bot mode (act as bot — phù hợp 80% use case SEONGON).
+
+**Note về user_access_token mode cho Lark**: lark-mcp support OAuth user mode nhưng hiện có bug với Larksuite (error 20029 dù setup chuẩn). Skill `lark-connect` chỉ support tenant mode để tránh bug này. Khi user cần user mode, đợi lark-mcp upstream fix.
 
 **Khi build skill mới cho 1 platform**: check first xem có official MCP không. Có → wrap MCP. Không → write custom scripts như google-connect.
 

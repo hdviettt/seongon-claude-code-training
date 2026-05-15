@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """lark_mcp_runner.py - wrapper spawn lark-mcp server với credentials từ .env.
 
-Pattern này tách bach credentials (secret, in .env) khoi MCP config (.mcp.json, can commit lên git).
+Pattern tach bach credentials (secret, in .env) khoi MCP config (.mcp.json, can commit len git).
 
 Runtime: Claude Code spawn script nay theo .mcp.json entry. Script doc .env, spawn
-npx -y @larksuiteoapi/lark-mcp mcp ... voi args dung. Stdio passed through.
+`npx -y @larksuiteoapi/lark-mcp mcp --domain ... --token-mode tenant_access_token ...`
+voi credentials tu .env. Stdio passed through Claude Code <-> lark-mcp.
 
-Sau khi `lark-mcp login -a X -s Y` chay, token cache tai ~/.lark-mcp/.
-Khi spawn `mcp` mode, lark-mcp tu load token tu cache.
+Skill nay CHI support tenant_access_token (bot mode). user_access_token (OAuth flow)
+hien co bug voi Larksuite (error 20029 du redirect URL whitelist dung).
 """
 import os
 import sys
@@ -44,7 +45,6 @@ def main():
     app_id = env_vars.get("LARK_APP_ID")
     app_secret = env_vars.get("LARK_APP_SECRET")
     domain = env_vars.get("LARK_DOMAIN", "https://open.larksuite.com")
-    token_mode = env_vars.get("LARK_TOKEN_MODE", "user_access_token")
     tools = env_vars.get("LARK_TOOLS", "")
 
     if not app_id or not app_secret:
@@ -54,17 +54,15 @@ def main():
         )
         sys.exit(1)
 
+    # Skill chi support tenant_access_token. user_access_token co bug voi Larksuite.
     args = [
         "npx", "-y", "@larksuiteoapi/lark-mcp",
         "mcp",
         "-a", app_id,
         "-s", app_secret,
         "--domain", domain,
-        "--token-mode", token_mode,
+        "--token-mode", "tenant_access_token",
     ]
-
-    if token_mode == "user_access_token":
-        args.append("--oauth")
 
     if tools:
         args.extend(["-t", tools])

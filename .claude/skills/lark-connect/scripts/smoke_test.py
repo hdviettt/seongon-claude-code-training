@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""smoke_test.py - verify lark-mcp server respond JSON-RPC tools/list.
+"""smoke_test.py - verify lark-mcp tenant mode responds JSON-RPC tools/list.
 
-Spawn lark_mcp_runner.py, send tools/list request, parse response.
+Spawn lark_mcp_runner.py, send tools/list request, parse response, verify >=10 tools.
+
+Tenant mode khong can token cache (lark-mcp tu lay tenant_access_token tu APP_ID + SECRET).
 
 Exit codes:
-  0 - PASS, >=1 tool returned
+  0 - PASS, >=10 tools returned
   1 - .env / config issue
   2 - lark-mcp spawn fail
   3 - tools/list empty hoac fail
@@ -19,7 +21,6 @@ from pathlib import Path
 SKILL_DIR = Path(__file__).resolve().parent.parent
 RUNNER = SKILL_DIR / "scripts" / "lark_mcp_runner.py"
 ENV_PATH = SKILL_DIR.parent.parent.parent / ".env"
-LARK_MCP_CACHE = Path.home() / ".lark-mcp"
 
 
 def log(msg):
@@ -35,22 +36,11 @@ def check_env():
     if not ENV_PATH.exists():
         fail(f".env khong ton tai tai {ENV_PATH}", 1)
     content = ENV_PATH.read_text(encoding="utf-8")
-    if "LARK_APP_ID=" not in content or "LARK_APP_SECRET=" not in content:
-        fail(".env thieu LARK_APP_ID hoac LARK_APP_SECRET", 1)
+    required = ["LARK_APP_ID=", "LARK_APP_SECRET=", "LARK_DOMAIN="]
+    missing = [k.rstrip("=") for k in required if k not in content]
+    if missing:
+        fail(f".env thieu cac bien: {', '.join(missing)}", 1)
     log(".env OK")
-
-
-def check_token_cache(verbose=False):
-    """Verify lark-mcp login da chay."""
-    if not LARK_MCP_CACHE.exists():
-        log(f"WARN: {LARK_MCP_CACHE} khong ton tai")
-        log("Co the lark-mcp chua login. Chay:")
-        log("  npx -y @larksuiteoapi/lark-mcp login -a <APP_ID> -s <APP_SECRET>")
-        # Khong fail - lark-mcp moi version co the cache cho khac
-    else:
-        if verbose:
-            files = list(LARK_MCP_CACHE.glob("*"))
-            log(f"{LARK_MCP_CACHE} co {len(files)} files")
 
 
 def test_tools_list(verbose=False):
@@ -77,11 +67,15 @@ def test_tools_list(verbose=False):
             text=True,
             encoding="utf-8",
             errors="replace",
-            timeout=60,
+            timeout=90,
             env=env,
         )
     except subprocess.TimeoutExpired:
-        fail("lark-mcp spawn timeout 60s - co the npx dang download package", 2)
+        fail(
+            "lark-mcp spawn timeout 90s - co the npx dang download package lan dau (~50MB). "
+            "Retry sau 1 phut.",
+            2,
+        )
     except FileNotFoundError:
         fail(f"Python khong tim thay {sys.executable}", 2)
 
@@ -95,7 +89,6 @@ def test_tools_list(verbose=False):
             2,
         )
 
-    # Parse stdout cho JSON-RPC response
     tools = []
     for line in proc.stdout.splitlines():
         line = line.strip()
@@ -114,9 +107,9 @@ def test_tools_list(verbose=False):
             "tools/list response empty hoac khong parse duoc.\n"
             f"Stdout sample:\n{proc.stdout[:500]}\n"
             f"Likely causes:\n"
-            f"  - lark-mcp chua login -> chay step 5\n"
-            f"  - Scopes chua approve trong Lark Console\n"
-            f"  - App chua Release -> Lark Console -> Version Management",
+            f"  - App chua Released o Lark Console -> Version Management -> Submit + Self-approve\n"
+            f"  - Scopes chua approve -> Lark Console -> Permissions & Scopes\n"
+            f"  - LARK_APP_ID/SECRET sai -> re-check .env",
             3,
         )
 
@@ -136,18 +129,17 @@ def main():
     log(f"Project root: {SKILL_DIR.parent.parent.parent}")
 
     check_env()
-    log("Step 1/3: .env validated - OK")
-
-    check_token_cache(args.verbose)
-    log("Step 2/3: Token cache check - OK")
+    log("Step 1/2: .env validated - OK")
 
     tools = test_tools_list(args.verbose)
-    log("Step 3/3: tools/list - OK")
+    log("Step 2/2: tools/list - OK")
 
     log("=" * 50)
-    log(f"SMOKE TEST PASSED - lark-mcp ready ({len(tools)} tools)")
-    log("Restart Claude Code de Claude load MCP. Sau do thu:")
-    log('  "Gui Lark cho group X: Test from Claude"')
+    log(f"SMOKE TEST PASSED - lark-mcp tenant mode ready ({len(tools)} tools)")
+    log("RESTART Claude Code (quit process, mo lai) de Claude load MCP.")
+    log("Sau do trong CC:")
+    log('  "List cac nhom chat Lark bot dang o"')
+    log('  "Send message qua Lark cho group X: Test"')
 
 
 if __name__ == "__main__":

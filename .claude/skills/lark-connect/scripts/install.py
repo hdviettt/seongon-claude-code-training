@@ -138,9 +138,10 @@ def main():
         warn("gitignore update fail (non-critical)")
 
     log("=" * 50)
-    log("Install hoan tat.")
-    log("Next step: chay `npx -y @larksuiteoapi/lark-mcp login -a $LARK_APP_ID -s $LARK_APP_SECRET`")
-    log("Sau khi login xong, RESTART Claude Code de load MCP.")
+    log("Install hoan tat (tenant mode - khong can OAuth login).")
+    log("Next step: RESTART Claude Code (quit process, mo lai) de load MCP.")
+    log("Sau do chay smoke test:")
+    log("  python .claude/skills/lark-connect/scripts/smoke_test.py --verbose")
 
 
 if __name__ == "__main__":

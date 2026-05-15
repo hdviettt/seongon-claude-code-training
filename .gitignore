@@ -39,3 +39,4 @@ node_modules/
 
 # Slides khoá cũ (SEO & Ads) — giữ local, không track
 slides/
+__pycache__/

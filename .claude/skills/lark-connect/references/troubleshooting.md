@@ -1,15 +1,15 @@
-# Troubleshooting — Lark MCP setup
+# Troubleshooting — Lark MCP setup (Tenant Mode)
 
-12+ common errors per step. Đọc khi step trong pipeline fail.
+10+ common errors per step. Đọc khi step trong pipeline fail.
 
 ## Contents
 - [Step 1 errors (pre-check)](#step-1-errors-pre-check)
 - [Step 2 errors (Lark Platform)](#step-2-errors-lark-platform)
-- [Step 3 errors (.env)](#step-3-errors-env)
+- [Step 3 errors (.env + app identity)](#step-3-errors-env--app-identity)
 - [Step 4 errors (.mcp.json)](#step-4-errors-mcpjson)
-- [Step 5 errors (OAuth login)](#step-5-errors-oauth-login)
-- [Step 6 errors (smoke test)](#step-6-errors-smoke-test)
+- [Step 5 errors (restart + smoke test)](#step-5-errors-restart--smoke-test)
 - [Runtime errors (sau setup)](#runtime-errors-sau-setup)
+- [Diagnosis nhanh](#diagnosis-nhanh)
 
 ---
 
@@ -35,7 +35,7 @@
 npm config set fetch-retry-maxtimeout 60000
 npm config set fetch-timeout 60000
 ```
-Hoặc cài global 1 lần (lần sau npx dùng cache):
+Hoặc cài global 1 lần:
 ```bash
 npm install -g @larksuiteoapi/lark-mcp
 ```
@@ -54,7 +54,7 @@ npm install -g @larksuiteoapi/lark-mcp
 **Cause**: Account là member của workspace, không phải admin.
 **Fix**:
 - Custom App: bạn là creator → tự enable scope được (không cần admin workspace)
-- Nếu vẫn fail → check email account dùng Lark Suite cá nhân, KHÔNG phải email workspace company.
+- Nếu vẫn fail → email account đang dùng có thể là Lark workspace company, switch sang email cá nhân.
 
 ### "App ID không hiện" sau khi tạo
 
@@ -63,19 +63,29 @@ npm install -g @larksuiteoapi/lark-mcp
 
 ---
 
-## Step 3 errors (.env)
+## Step 3 errors (.env + app identity)
 
 ### "LARK_APP_ID format invalid"
 
 **Cause**: Paste nhầm hoặc copy thiếu prefix.
-**Format đúng**: `cli_` + 16 chars alphanumeric, vd `cli_a1b2c3d4e5f6g7h8`.
-**Fix**: Quay lại Console → Credentials → click icon copy bên cạnh App ID.
+**Format đúng**: `cli_` + 16 chars alphanumeric, vd `cli_a7e3876125b95010`.
+**Fix**: Console → Credentials → click icon copy bên cạnh App ID.
 
 ### "LARK_APP_SECRET too short"
 
-**Cause**: Copy thiếu, hoặc copy nhầm.
-**Format đúng**: 40+ chars random alphanumeric.
+**Cause**: Copy thiếu hoặc nhầm.
+**Format đúng**: 32+ chars random alphanumeric.
 **Fix**: Console → Credentials → "App Secret" → click eye icon để show → copy.
+
+### "App identity verify fail" (app name không match expectation)
+
+**Cause**: Anh paste credentials của app khác trong account.
+**Fix**:
+1. Console → list apps → click đúng app
+2. Re-copy App ID + Secret
+3. Update `.env`
+
+**Lưu ý về i18n**: API trả `app_name` theo primary language (English). UI Console hiển thị theo language setting (vd Vietnamese). Cùng app, khác name hiển thị — verify bằng App ID match là chính xác.
 
 ---
 
@@ -83,74 +93,42 @@ npm install -g @larksuiteoapi/lark-mcp
 
 ### "JSON parse error"
 
-**Cause**: File `.mcp.json` đã tồn tại với syntax sai.
-**Fix**: Validate file bằng `python -c "import json; json.load(open('.mcp.json'))"`. Nếu error, fix syntax (thiếu comma, dư bracket).
+**Cause**: `.mcp.json` tồn tại với syntax sai.
+**Fix**:
+```bash
+python -c "import json; json.load(open('.mcp.json'))"
+```
+Nếu error → fix syntax (thiếu comma, dư bracket, smart quotes).
 
 ### "mcpServers entry 'lark-mcp' đã tồn tại"
 
-**Cause**: Skill đã chạy trước đó.
-**Fix**: `install.py` sẽ overwrite entry — confirm với user. Nếu user muốn giữ entry cũ, manual edit `.mcp.json`.
+**Cause**: Skill chạy trước đó hoặc user manual add.
+**Fix**: `install.py` MERGE — nếu entry khác value, overwrite. Nếu user muốn giữ entry cũ, manual edit `.mcp.json`.
 
-### Claude Code không load `.mcp.json` mới
+### Claude Code không load `.mcp.json`
 
-**Cause**: Cần restart Claude Code hoàn toàn (close hết tabs, mở lại).
-**Fix**: Quit process Claude Code (Ctrl+Q hoặc Cmd+Q), launch lại.
-
----
-
-## Step 5 errors (OAuth login)
-
-### "Invalid app credentials"
-
-**Cause 1**: App chưa Release ở Step 2 sub-step 6.
-**Fix**: Vào Console → Version Management → Submit for Release → Self-approve.
-
-**Cause 2**: App Secret copy sai.
-**Fix**: Console → Credentials → copy lại Secret (click eye icon).
-
-**Cause 3**: Domain mismatch — app tạo trên Feishu nhưng skill default Lark Suite.
-**Fix**: Set `LARK_DOMAIN=https://open.feishu.cn` trong `.env` (hoặc ngược lại).
-
-### "redirect_uri mismatch"
-
-**Cause**: Lark-mcp dùng `http://localhost:8080/callback`. App chưa whitelist URL này.
-**Fix**: Console → Security Settings → Redirect URLs → add `http://localhost:8080/callback` → Save.
-
-### Browser không tự mở
-
-**Cause**: WSL / remote shell.
-**Fix**: Copy URL từ stderr → paste browser host machine.
-
-### "Insufficient scope"
-
-**Cause**: Step 2 sub-step 4 chưa enable đủ scope.
-**Fix**: Console → Permissions → enable thiếu scope → Save → re-run Step 5.
-
-### "Port 8080 already in use"
-
-**Cause**: Process khác chiếm port.
-**Fix Windows**:
-```powershell
-Get-Process -Id (Get-NetTCPConnection -LocalPort 8080).OwningProcess
-Stop-Process -Id <PID>
-```
-**Fix macOS/Linux**:
-```bash
-lsof -i :8080
-kill <PID>
-```
+**Cause**: Path sai (relative vs absolute) hoặc syntax error silent skip.
+**Fix**:
+- Validate JSON parse OK
+- Verify `.mcp.json` ở project root (cùng cấp `.claude/`)
+- Use forward slash trong path (kể cả Windows)
 
 ---
 
-## Step 6 errors (smoke test)
+## Step 5 errors (restart + smoke test)
+
+### Smoke test stuck / timeout 90s
+
+**Cause**: npx tải lark-mcp lần đầu (~50MB).
+**Fix**: Đợi thêm. Lần sau dùng npm cache, nhanh hơn nhiều.
 
 ### `tools/list` returns empty
 
-**Cause 1**: lark-mcp chưa login.
-**Fix**: Re-run Step 5.
+**Cause 1**: App chưa Released.
+**Fix**: Console → Version Management → Submit for Release → Self-approve.
 
 **Cause 2**: Scopes enable nhưng chưa approve trong Console.
-**Fix**: Console → Permissions → check status mỗi scope = "Approved" (không phải "Pending").
+**Fix**: Console → Permissions → check status mỗi scope = "Approved" (không phải "Pending"). Save Changes nếu cần.
 
 ### "Cannot find module '@larksuiteoapi/lark-mcp'"
 
@@ -163,33 +141,52 @@ npx -y @larksuiteoapi/lark-mcp --version
 
 ### Claude Code không thấy tool Lark sau restart
 
-**Cause 1**: `.mcp.json` syntax error → CC silent skip.
-**Fix**: Validate JSON (`python -c "import json; json.load(open('.mcp.json'))"`), fix error.
+**Cause 1**: Chưa QUIT process hoàn toàn — chỉ close window hoặc reload.
+**Fix**: 
+- Mac: Cmd+Q hoàn toàn → mở lại
+- Windows: Ctrl+Q hoặc Task Manager kill Claude Code → mở lại
+- KHÔNG `/restart` hoặc reload window
 
-**Cause 2**: CC chưa restart hoàn toàn — chỉ reload window.
-**Fix**: Quit CC process hoàn toàn, launch lại.
+**Cause 2**: `.mcp.json` syntax error → CC silent skip.
+**Fix**: Validate JSON (`python -c "import json; json.load(open('.mcp.json'))"`).
 
-**Cause 3**: Path trong `.mcp.json` sai (vd Windows backslash thay vì forward slash).
-**Fix**: Use forward slash trong tất cả path, kể cả Windows.
+**Cause 3**: Path trong `.mcp.json` sai (Windows backslash).
+**Fix**: Use forward slash mọi path.
+
+### Smoke test PASS nhưng Claude không gọi được tool
+
+**Cause**: Claude session chưa load MCP (CC chưa restart đúng).
+**Fix**: Quit Claude Code hoàn toàn → mở lại session mới.
 
 ---
 
 ## Runtime errors (sau setup)
 
-### Claude báo "tool not found: im.v1.message.create"
+### Claude báo "tool not found: im_v1_chat_list"
 
-**Cause**: Tool name typo, hoặc preset chưa cover.
-**Fix**: Hỏi Claude list tools available: "list all Lark tools you have". Verify tool name chính xác.
+**Cause**: Tool name typo (lark-mcp dùng underscore `_` không phải dot `.`).
+**Fix**: Hỏi Claude list tools: "list all Lark tools available". Verify tên đúng.
 
-### Tool call fail 401
+### Tool call fail 401 "invalid_token"
 
-**Cause**: Token expired hoặc revoked.
-**Fix**: Re-run Step 5 (OAuth login). lark-mcp tự refresh token nội bộ, nhưng nếu user revoke app trong Lark account settings → cần re-auth.
+**Cause**: App credentials sai hoặc App chưa Released.
+**Fix**:
+- Verify `.env` LARK_APP_ID + SECRET đúng
+- Console → Version Management status = "Released"
 
-### Tool call fail 403
+### Tool call fail 403 "FORBIDDEN_SCOPE"
 
 **Cause**: Scope thiếu cho tool đó.
-**Fix**: Identify scope cần (đọc lark-mcp docs hoặc thử-sai). Vào Console → Permissions → enable → re-login.
+**Fix**:
+1. Đọc error message — Lark thường nói rõ scope nào cần
+2. Console → Permissions → Add Permission → enable scope
+3. Save Changes
+4. Restart Claude Code (tools metadata cache)
+
+### "Bot không có quyền truy cập chat này"
+
+**Cause**: Bot không là member của chat.
+**Fix**: Trong chat đó → Settings → Add Members → search bot name → Add.
 
 ### "Rate limit exceeded"
 
@@ -205,9 +202,22 @@ Khi không biết lỗi gì, chạy:
 python .claude/skills/lark-connect/scripts/smoke_test.py --verbose
 ```
 
-Output sẽ cho biết:
+Output cho biết:
 - `.env` có đủ 3 biến không
 - `npx lark-mcp` spawn được không
 - Tool list count + sample tool names
+- Stderr last 500 chars (catch error message)
 
 Copy output → paste vào Claude Code → Claude map ra fix.
+
+Verify app identity manual:
+```bash
+TOKEN=$(curl -s -X POST 'https://open.larksuite.com/open-apis/auth/v3/tenant_access_token/internal' \
+  -H 'Content-Type: application/json' \
+  -d '{"app_id":"<APP_ID>","app_secret":"<SECRET>"}' | python -c "import json,sys; print(json.load(sys.stdin).get('tenant_access_token',''))")
+
+curl -s "https://open.larksuite.com/open-apis/application/v6/applications/<APP_ID>?lang=en_us" \
+  -H "Authorization: Bearer $TOKEN" | python -m json.tool
+```
+
+Output gồm `app_name`, `description` — verify đúng app.

@@ -1,38 +1,83 @@
 # Cấu trúc 1 SKILL
 
+## Cách nhanh nhất: gõ `/create-skill`
+
+Repo này đã cài skill `create-skill` — tự generate SKILL.md đầy đủ chuẩn Anthropic cho bạn. Đọc tiếp file này chỉ khi:
+- Bạn muốn HIỂU cấu trúc (không phải tự viết)
+- Bạn cần chỉnh skill có sẵn
+- Bạn build skill phức tạp cần fine-tune
+
+Còn lại, gõ `/create-skill` luôn.
+
+## 2 loại skill — Reference vs Task
+
+Trước khi học cấu trúc, biết skill bạn build thuộc loại nào — vì cấu trúc khác:
+
+### Reference skill — Claude áp dụng kiến thức song song
+- Output user nhận = deliverable của task khác (skill chỉ inject knowledge)
+- Vd: `brand-guidelines` (Claude áp dụng voice khi viết content), `bigquery-schema` (Claude consult schema khi viết SQL)
+- KHÔNG có Pipeline numbered — thay bằng "Core principles" + "Reference files"
+
+### Task skill — Claude chạy pipeline tạo deliverable riêng
+- Output user nhận = artifact MỚI ĐỘC LẬP từ skill
+- Vd: `macro-research` (output 1 PDF), `audit-webapp` (output 1 audit report)
+- CÓ Pipeline numbered, có decision points
+
+Phân biệt bằng 1 câu hỏi: **"Sau khi skill chạy xong, user có nhận được artifact MỚI ĐỘC LẬP không?"**
+
+Nếu CÓ → Task. Nếu KHÔNG → Reference.
+
+6 dạng Task skill: Research, Workflow, Generator, Analyzer, Voice/Style, Discovery — xem `.claude/skills/create-skill/references/skill-taxonomy.md` cho chi tiết.
+
+## Progressive disclosure — design principle quan trọng nhất
+
+Anthropic chia skill thành 3 tầng load:
+
+```
+Tier 1: Metadata (name + description)        ← Luôn load, ~100 từ
+Tier 2: SKILL.md body                        ← Load khi skill triggers, ≤500 dòng
+Tier 3: Bundled resources (references/...)   ← Load on-demand, không giới hạn
+```
+
+→ Đừng nhồi mọi thứ vào SKILL.md. Body ≤500 dòng / 1500-2000 từ. Detail dài tách `references/`.
+
 ## Layout folder
 
-Mỗi SKILL là 1 folder. Cấu trúc:
+Mỗi SKILL là 1 folder. Cấu trúc chuẩn Anthropic — tách bạch 3 loại bundled resources:
 
 ```
 .claude/skills/
 └── <ten-skill>/
-    ├── SKILL.md        ← bắt buộc, mô tả skill
-    ├── script.py       ← optional, code đi kèm
-    ├── checklist.md    ← optional, danh sách check
-    ├── format.md       ← optional, template output
-    └── references/     ← optional, tài liệu tham khảo
-        └── ...
+    ├── SKILL.md              ← BẮT BUỘC, mô tả skill (≤500 dòng)
+    ├── EVALS.md              ← KHUYẾN NGHỊ, 3 scenarios test
+    ├── references/           ← optional — docs Claude đọc khi cần
+    │   ├── schemas.md
+    │   ├── advanced.md
+    │   └── ...
+    ├── scripts/              ← optional — code chạy được (Python/Bash)
+    │   └── helper.py
+    └── assets/               ← optional — file dùng TRONG output (templates, fonts)
+        └── template.html
 ```
 
-- `SKILL.md` là **bắt buộc**. Tất cả file khác là optional, tuỳ skill.
+**3 thư mục KHÔNG gộp lại** — mỗi mục đích khác:
+| Folder | Mục đích | Khi nào load |
+|---|---|---|
+| `references/` | Docs Claude đọc khi cần | Khi pipeline reference tới file đó |
+| `scripts/` | Code execute (deterministic) | Khi pipeline run command đó |
+| `assets/` | File dùng trong output | Skill copy/modify ra cho user |
+
+- `SKILL.md` là **bắt buộc**. Tất cả file/folder khác là optional.
 - Tên folder = tên gọi của skill khi dùng `/`.
 
 ## File `SKILL.md` chuẩn
 
-Format khuyến nghị (frontmatter YAML + nội dung):
+Format chuẩn Anthropic (frontmatter YAML + nội dung). Frontmatter chỉ cần `name` + `description`:
 
 ```markdown
 ---
 name: research
-description: Research 1 chủ đề và viết báo cáo theo format chuẩn. Dùng khi user gõ "/research <chủ đề>" hoặc nói cần tìm hiểu sâu về 1 topic.
-user-invokable: true
-argument-hint: <chủ đề cần research>
-license: MIT
-metadata:
-    author: Việt
-    version: 1.0
-    category: research
+description: This skill should be used when the user asks to "research about [topic]", "tìm hiểu về [X]", "/research [Y]", "compile findings on Z", "tổng hợp thông tin về W". Produces structured research report with 5-10 cited sources, comparison of consensus vs disagreement, and TL;DR.
 ---
 
 # Research Skill
@@ -113,16 +158,20 @@ Lưu báo cáo vào `output/<tên-chủ-đề>-<date>.md`.
 
 ## Frontmatter (YAML đầu file)
 
-Phần `---...---` ở đầu là **frontmatter** — metadata mô tả skill.
+Phần `---...---` ở đầu là **frontmatter** — metadata mô tả skill. Anthropic chỉ require 2 field:
 
-| Field | Bắt buộc? | Mô tả |
+| Field | Bắt buộc | Constraints |
 |---|---|---|
-| `name` | Bắt buộc | Tên skill (matching tên folder) |
-| `description` | Bắt buộc | Mô tả ngắn, Claude dùng để quyết định khi nào gọi skill |
-| `user-invokable` | Optional | `true` nếu user gõ `/` để dùng được |
-| `argument-hint` | Optional | Gợi ý argument để hiện khi user gõ |
-| `license` | Optional | License (MIT, CC BY...) |
-| `metadata` | Optional | Tác giả, version, category... |
+| `name` | YES | Lowercase + hyphens + numbers. ≤64 ký tự. KHÔNG chứa "anthropic" / "claude" (reserved). Match tên folder. |
+| `description` | YES | ≤1024 ký tự. Third-person ("This skill should be used when..."). ≥5 trigger phrases cụ thể. |
+
+**Description quan trọng nhất** — Anthropic cảnh báo Claude tendency UNDERTRIGGER skills nếu description vague. Phải:
+- Third-person — KHÔNG "Use this when..." / "I can help..."
+- Pushy — dùng "should be used"
+- Có cả *what* skill làm + *when* nên trigger
+- Cụ thể, không generic
+
+**Naming convention**: Anthropic preferred = gerund form (`processing-pdfs`, `analyzing-spreadsheets`). Exception: Reference skill naming domain entity dùng noun-phrase (`brand-guidelines`, `bigquery-schema-reference`).
 
 ## Cấu trúc nội dung skill (sau frontmatter)
 
@@ -218,7 +267,16 @@ project/.claude/skills/research/SKILL.md
 
 ## Ví dụ skill hoàn chỉnh
 
-Xem [`examples/research-skill/`](examples/research-skill/) trong folder này.
+2 chỗ tham khảo:
+
+1. **`.claude/skills/create-skill/`** trong repo này — skill production-grade với đầy đủ:
+   - SKILL.md pipeline 8 bước
+   - EVALS.md với 3 scenarios
+   - 4 file references/ (taxonomy, type-guides, validation, anti-patterns)
+   - 2 file assets/ (skill-template, eval-template)
+   - Đây là skill TỰ GENERATE skill mới — đọc để hiểu best practices applied thực tế
+
+2. **[`examples/research-skill/`](examples/research-skill/)** — skill đơn giản 1 file để bắt đầu
 
 ## Tiếp theo
 

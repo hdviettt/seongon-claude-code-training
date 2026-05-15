@@ -28,26 +28,32 @@ Demo:
 
 ### Phần 2 — SKILLs (45 phút)
 
-**Mục tiêu:** Học viên build được 1 SKILL đơn giản.
+**Mục tiêu:** Học viên build được 1 SKILL production-grade qua `/create-skill`.
 
 Tham chiếu:
 - [`knowledge/03-mo-rong-claude-code/skills/`](../knowledge/03-mo-rong-claude-code/skills/)
 - [`knowledge/03-mo-rong-claude-code/skills/cau-truc.md`](../knowledge/03-mo-rong-claude-code/skills/cau-truc.md)
+- [`.claude/skills/create-skill/`](../.claude/skills/create-skill/) — skill tự generate skill mới (đã cài sẵn)
 
 Cover:
 - SKILL khác Commands: tự xây vs xây sẵn.
 - Bản chất SKILL = chỉ dẫn đóng gói để dùng lại.
-- Cấu trúc: folder `.claude/skills/<ten>/SKILL.md` + file đi kèm.
+- **2 loại skill: Reference (Claude áp dụng song song) vs Task (Claude tạo deliverable riêng).**
+- Cấu trúc 3 tầng: `SKILL.md` body ≤500 dòng + `references/` (load on-demand) + `assets/` (dùng trong output).
 - 2 cấp: project vs user.
-- Cách đánh giá SKILL tốt: chỉ dẫn cụ thể + tiêu chí chất lượng.
+- Cách đánh giá SKILL tốt theo Anthropic best practices: description third-person có ≥5 triggers, body imperative form, progressive disclosure.
 
-Hands-on bài tập:
-- Tự thiết kế 1 SKILL `/research` với:
-  - Bước nghiên cứu của riêng học viên.
-  - Nguồn ưu tiên.
-  - Giới hạn số nguồn.
-  - Format output.
-- Lưu ở cấp project.
+Demo (15 phút):
+- Mở `.claude/skills/create-skill/SKILL.md` đọc cùng học viên — đây là skill production-grade
+- Gọi `/create-skill` live, tạo 1 skill thật cho 1 use case học viên đề xuất
+
+Hands-on bài tập (20 phút):
+- Mỗi học viên chọn 1 task họ làm lặp lại trong công việc (research khách hàng, viết content theo voice, audit website, generate proposal)
+- Gọi `/create-skill` để skill tự generate skill mới
+- Trả lời các câu hỏi `/create-skill` đặt ra
+- Test skill bằng 3 scenarios trong EVALS.md được generate
+
+Outcome: mỗi học viên có 1 skill production-grade trong `.claude/skills/` của repo riêng.
 
 ### Giải lao (10 phút)
 

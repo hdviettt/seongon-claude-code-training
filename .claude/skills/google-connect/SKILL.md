@@ -20,6 +20,7 @@ KHÔNG dùng skill này khi:
 - User chỉ cần đọc 1 public Sheet (dùng URL export CSV nhanh hơn)
 - User đã có `.env` working + hook installed (skill đã chạy thành công trước đó — gọi lại sẽ overwrite)
 - User muốn dùng Google service account (skill này là OAuth user flow — service account cần skill khác)
+- User cần **Google Ads / DV360 / SA360 / CM360** — các API marketing này cần credentials BỔ SUNG ngoài OAuth scope (xem `references/scopes-explained.md` mục "Lưu ý: 1 số Google API cần credentials BỔ SUNG"). Skill cover OAuth scope flow only.
 
 ## Default settings
 

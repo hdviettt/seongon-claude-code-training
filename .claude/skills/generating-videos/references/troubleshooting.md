@@ -1,4 +1,4 @@
-# Troubleshooting — generating-videos
+# Troubleshooting — generating-videos (Together AI)
 
 ## Contents
 - [Auth errors](#auth-errors)
@@ -10,177 +10,165 @@
 
 ## Auth errors
 
-### `GEMINI_API_KEY không tìm thấy`
+### `TOGETHER_AI_API_KEY không tìm thấy`
 
 **Cause**: `.env` thiếu biến.
 **Fix**:
-1. Apply tại https://aistudio.google.com/app/apikey
-2. Click "Create API Key" → chọn project
-3. Copy key (format `AIza...`, ~39 chars)
-4. Add `.env`:
+1. Apply tại https://api.together.ai/settings/api-keys
+2. Copy key (format `tgp_v1_...`)
+3. Add `.env`:
    ```
-   GEMINI_API_KEY=AIzaSyXXXX
+   TOGETHER_AI_API_KEY=tgp_v1_xxxx
    ```
 
 ### HTTP 401 invalid key
 
 **Cause**: Key sai/expired/revoked.
-**Fix**:
-- Verify format `AIza...`
-- Re-copy từ AI Studio
-- Check key chưa restrict (Cloud Console → APIs & Services → Credentials)
+**Fix**: Re-copy từ dashboard. Check key chưa được revoke.
 
-### HTTP 403 billing not enabled
+### HTTP 402 insufficient credit
 
-**Cause**: Project Cloud chưa enable billing. VEO 3 = paid model.
-**Fix**:
-1. Vào https://console.cloud.google.com/billing
-2. Link billing account vào project có Gemini API enabled
-3. Verify card valid + có credit
+**Cause**: Together account hết credit. Video gen paid ($0.30-1.50/clip).
+**Fix**: Nạp tiền tại https://api.together.ai/settings/billing.
 
 ## Submission errors
 
-### HTTP 400 "invalid argument: duration must be 8 for {resolution}"
+### HTTP 400 invalid model
 
-**Cause**: 1080p/4k require duration=8.
-**Fix**: Truyền `--duration 8` khi dùng 1080p/4k. Skill validate trước call.
+**Cause**: Model name typo. Common mistakes:
+- ❌ `veo-3.0-fast` (thiếu provider prefix)
+- ✅ `google/veo-3.0-fast`
+- ❌ `sora-2`
+- ✅ `openai/sora-2`
+- ❌ `kling-pro`
+- ✅ `kwaivgI/kling-2.1-pro`
 
-### HTTP 400 "prompt too short"
+**Fix**: Verify model name từ `references/video-models-comparison.md`. Luôn có provider prefix.
+
+### HTTP 400 invalid size
+
+**Cause**: `size` param sai format.
+**Fix**: Use `"1920x1080"` (16:9) hoặc `"1080x1920"` (9:16). Skill handle conversion từ `--aspect` flag.
+
+### HTTP 400 prompt too short
 
 **Cause**: Prompt < 15 chars.
 **Fix**: Viết prompt mô tả ≥15 chars. Đọc `references/prompt-engineering.md`.
 
-### HTTP 400 invalid model name
-
-**Cause**: Typo model name. Common:
-- ❌ `veo-3` (thiếu version)
-- ❌ `veo-3.1` (thiếu suffix)
-- ✅ `veo-3.1-fast-generate-preview`
-
-**Fix**: Verify từ `references/veo-models-comparison.md`.
-
-### HTTP 422 content policy
+### HTTP 400 content policy
 
 **Cause**: Prompt vi phạm:
 - Public figures (celebrity, politician)
-- Copyrighted characters (Disney, Marvel, anime)
-- NSFW, violence, gore
+- Copyrighted characters
+- NSFW, violence
 - Hate speech
 
-**Fix**: Rephrase prompt safe. Avoid real names + copyrighted IP.
+**Fix**: Rephrase prompt safe.
 
 ## Polling errors
 
-### Timeout 6 phút
+### Timeout 10 phút
 
-**Cause**: VEO model occasionally slow, hoặc queue saturated.
+**Cause**: Model occasionally slow, hoặc queue saturated.
 **Fix**:
-- Retry sau 5 phút
-- Switch model: `veo-3.1-fast-generate-preview` (rồi lên standard nếu cần)
-- Check Google Cloud status page
+- Retry sau 5 phút (new job)
+- Switch model: dùng fast variant (vd `veo-3.0-fast` thay `veo-3.0`)
+- Check status https://status.together.ai
 
-### HTTP 404 operation not found
+### Job status `failed`
 
-**Cause**: Operation ID expire (24h+ stale) hoặc typo.
-**Fix**: Re-submit generation request.
+**Cause**: Generation internal error, hoặc prompt fail safety filter.
+**Fix**: 
+- Re-submit với prompt khác nếu content policy issue
+- Re-submit nguyên prompt nếu internal (50/50 fix)
 
-### HTTP 429 quota exceeded
+### Polling 429
 
-**Cause**: 
-- Free tier daily quota hit
-- Paid tier hourly burst limit
-**Fix**:
-- Đợi quota reset (display rõ trong dashboard)
-- Apply quota increase tại Cloud Console → Quotas
+**Cause**: Poll faster than allowed rate.
+**Fix**: Skill default 15s interval — đã OK. Nếu override < 10s sẽ hit.
 
 ## Download errors
 
-### Video URI 404
+### Video URL 404
 
-**Cause**: 
-- URI format khác expected (skill expect `files/{id}`)
-- Server retention 2 ngày đã pass
-**Fix**:
-- Re-submit gen request — old URI gone
-- Check response format có thay đổi (Gemini API beta — schema có thể update)
+**Cause**: URL expire 24h.
+**Fix**: 
+- Script download NGAY sau job done (đã handle)
+- Nếu skill chạy session lâu, URL gone — re-submit job
 
 ### Download timeout
 
-**Cause**: Network slow, file lớn (4k video ~50MB).
-**Fix**: Tăng timeout trong `generate.py` từ 120s → 300s.
+**Cause**: Network slow, file lớn (1080p ~15-25MB).
+**Fix**: Tăng timeout trong `generate.py` từ 180s → 300s.
 
-### Saved file 0 bytes
+### File 0 bytes
 
-**Cause**: Download fail mid-stream, hoặc API trả empty.
-**Fix**: Re-run generate.py. Nếu lặp lại check API response trực tiếp.
+**Cause**: Download fail mid-stream.
+**Fix**: Re-download URL (vẫn valid 24h).
 
 ## Quality issues
 
 ### Video không có motion
 
-**Cause**: Prompt static (vd "a beach scene"), VEO không biết motion gì.
-**Fix**: Add motion verbs ("waves rolling", "camera pans right"). Đọc `references/prompt-engineering.md` mục Motion cues.
+**Cause**: Prompt static, model không biết motion gì.
+**Fix**: Add motion verbs ("waves rolling", "camera pans right"). Đọc `references/prompt-engineering.md`.
 
-### Audio không match
+### Audio không match (VEO/Sora)
 
-**Cause**: Audio cues quá specific hoặc conflict (vd nói "silent" nhưng prompt có "music").
+**Cause**: Audio cues quá specific hoặc conflict.
 **Fix**: 
-- Audio cues nhẹ thôi (general ambient)
-- Skip music spec → VEO tự generate phù hợp
+- Audio cues nhẹ thôi
+- Skip music spec → model tự generate phù hợp
 
-### Lip-sync issue khi có dialogue
+### Sora vs VEO khác biệt motion
 
-**Cause**: VEO 3 generate dialogue được nhưng lip-sync varies.
-**Fix**:
-- Avoid dialogue trong prompt
-- Hoặc accept imperfect sync (re-gen 2-3 lần lấy best)
+**Cause**: Sora strong realistic motion, VEO better audio. Khác model khác trade-off.
+**Fix**: Match model với use case:
+- Realistic action → Sora
+- Audio + ambient → VEO
+- Stylized → Kling
 
-### Color tone lệch
+### Aspect ratio output sai
 
-**Cause**: VEO sometimes drift color từ prompt intent.
-**Fix**:
-- Specify color explicit ("warm golden tones", "cool blue palette")
-- Re-gen với prompt clearer
-
-### Aspect ratio sai
-
-**Cause**: User truyền nhầm `--aspect`.
-**Fix**: Skill validate accept chỉ `16:9` hoặc `9:16`. Custom aspect không support — crop post-process.
+**Cause**: `--aspect` flag truyền sai.
+**Fix**: Skill accept chỉ `16:9` hoặc `9:16`. Custom aspect → crop post-process.
 
 ## Cost surprise
 
-### Hóa đơn Google Cloud bất ngờ
+### Bill bất ngờ
 
 **Cause**: Generate nhiều video không track.
 **Fix**:
-- Set budget alert tại Cloud Console → Billing → Budgets
-- Use `veo-3.1-lite-generate-preview` cho draft (~$0.20 vs $0.40)
-- Avoid 1080p/4k cho test
+- Check usage tại https://api.together.ai/settings/usage
+- Set budget alert
+- Use cheap models cho draft (`vidu/vidu-q1` $0.30)
 
-**Cost estimation per video** (skill auto-print trước call):
-- Lite + 720p/4s: ~$0.10
-- Fast + 720p/8s: ~$0.30 (default skill)
-- Standard + 1080p/8s: ~$0.80
-- Standard + 4k/8s: ~$1.60
+**Cost estimation per video** (skill auto-print):
+- Vidu/Seedance: ~$0.30
+- Kling standard: ~$0.40
+- Kling pro: ~$0.70
+- Hailuo: ~$0.50
+- VEO 3 fast: ~$0.80 (default)
+- VEO 3 / Sora 2: ~$1.00-1.20
+- Sora 2 pro: ~$1.50
 
-### Polling burn quota
+### Concurrent jobs
 
-**Cause**: Mỗi GET operation count vào API quota.
-**Fix**: Skill poll 10s interval (max 36 polls per gen) — đã optimal. Không tăng interval thấp hơn.
+**Cause**: Submit 5 jobs cùng lúc → bill 5x.
+**Fix**: Submit sequential nếu muốn budget control. Together không có queue priority.
 
 ## Diagnosis nhanh
 
 ```bash
-# Test API key only (no cost)
 python .claude/skills/generating-videos/scripts/smoke_test.py --dry-run
-
-# Full test (cost ~$0.10)
-python .claude/skills/generating-videos/scripts/smoke_test.py
 ```
 
 Dry-run cho biết:
 - API key valid
 - Endpoint reachable
-- VEO models accessible cho account
+- Account có credit không
 
-Full test extra verify gen flow end-to-end.
+Full test (~$0.30 với kling-standard):
+```bash
+python .claude/skills/generating-videos/scripts/smoke_test.py
+```

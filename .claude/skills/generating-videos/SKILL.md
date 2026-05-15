@@ -1,240 +1,210 @@
 ---
 name: generating-videos
-description: This skill should be used when the user asks to "generate video", "tạo video", "create video with VEO", "tạo video AI", "/generate-video [prompt]", "AI video", "VEO 3 video", "video clip ngắn", "video TikTok AI", "video Instagram AI", or wants Claude Code to generate a short video clip (4-8s) from a text prompt using Google's VEO 3 model via Gemini API. Handles async operation polling (11s-6min latency), downloads MP4 file, saves locally. Includes native audio generation (synced sound effects, ambient, dialogue). End deliverable — video file at output/videos/<slug>.mp4 + metadata JSON với prompt, model, duration, resolution, aspect ratio.
+description: This skill should be used when the user asks to "generate video", "tạo video", "create video with VEO", "create video with Sora", "tạo video AI", "/generate-video [prompt]", "AI video", "VEO 3 video", "Sora 2 video", "Kling video", "video clip ngắn", "video TikTok AI", "video Instagram AI", or wants Claude Code to generate a short video clip from a text prompt via Together AI's video API. Supports 30+ video models: Google VEO 3.0 / VEO 3.0 audio / VEO 2.0, OpenAI Sora 2 / Sora 2 Pro, Kling 2.1, Hailuo, Vidu, Seedance, Wan, Pixverse. Handles async job polling (30s-4min), downloads MP4, saves locally. End deliverable — video file at output/videos/<slug>.mp4 + metadata JSON với model + cost + size + duration + job_id.
 ---
 
 # generating-videos
 
-Skill tạo video clip ngắn từ text prompt qua Google VEO 3 (Gemini API). Output = file MP4 saved local + audio embedded + metadata JSON. Phù hợp: short clip cho social (TikTok/Reels/Shorts), product demo, ad teaser, concept visualization.
+Skill tạo video clip từ text prompt qua Together AI's video API. Output = MP4 saved local + metadata JSON. 30+ video models support: VEO 3, Sora 2, Kling, Hailuo, Vidu, Seedance.
+
+Phù hợp: short clip social (TikTok/Reels/Shorts), product demo, ad teaser, concept visualization.
 
 ## Khi nào dùng skill này
 
 User nói một trong các pattern:
 - `/generate-video [prompt]` hoặc `/generate-video` (skill sẽ ask prompt)
 - "tạo video [mô tả]", "generate video [prompt]"
-- "AI video [prompt]", "VEO clip [scene]"
+- "VEO 3 video", "Sora video", "Kling video"
 - "tạo TikTok video AI", "tạo Reels concept"
 
 KHÔNG dùng skill này khi:
-- User cần video dài >8s (VEO 3 max 8s per generation — cần multi-clip + edit tool)
-- User cần edit video có sẵn (skill chỉ tạo từ text, image-to-video xem section khác)
-- User cần real footage (không phải AI gen) — search Pexels/Pixabay
-- User cần video không kèm audio (VEO 3 always gen audio — disable không support)
-- User CHƯA có `GEMINI_API_KEY` — skill sẽ guide setup nhưng cần user apply trước
+- User cần video dài >8s (most models max 6-8s, Kling 2.1 max ~15s)
+- User cần edit video có sẵn (skill chỉ tạo từ text)
+- User cần real footage (không AI gen) — search Pexels/Pixabay
+- User CHƯA có `TOGETHER_AI_API_KEY` — apply trước
 
 ## Default settings
 
 | Setting | Default | Override khi |
 |---|---|---|
-| Model | `veo-3.1-fast-generate-preview` (faster, cheaper) | Quality cao hơn → `veo-3.1-generate-preview` |
-| Resolution | `720p` | Quality cao hơn → `1080p` hoặc `4k` (require 8s duration) |
-| Duration | `8` giây | Shorter clip → `4` hoặc `6` (chỉ với 720p) |
-| Aspect ratio | `16:9` (landscape) | Mobile vertical → `9:16` |
-| Person generation | `allow_all` (text-to-video) | Có image input → `allow_adult` |
-| Output dir | `output/videos/` | User chỉ định path khác |
-| Polling interval | 10s | Don't override |
-| Max wait | 360s (6 phút) | Don't override (API limit) |
+| Model | `google/veo-3.0-fast` | Quality cao hơn → `google/veo-3.0` hoặc `openai/sora-2-pro`; Cheap hơn → `kwaivgI/kling-2.1-standard` |
+| Aspect ratio | `16:9` (landscape, 1920×1080) | Mobile vertical → `9:16` (1080×1920) |
+| Output dir | `output/videos/` | User chỉ định khác |
+| Polling interval | 15s | Don't override (rate limit) |
+| Max wait | 600s (10 phút) | Don't override (API limit) |
+| Language | Tiếng Việt báo cáo | User chỉ nói tiếng Anh |
 
 ## Pre-conditions
 
-- [ ] `GEMINI_API_KEY` trong `.env` (apply tại https://aistudio.google.com/app/apikey)
-- [ ] Python 3.10+ với stdlib `urllib`
-- [ ] Internet (Gemini API endpoint)
-- [ ] Disk space ~5-50MB per video (tuỳ resolution + duration)
-- [ ] Billing enabled trên Google Cloud (VEO 3 paid model, ~$0.40/8s 720p)
+- [ ] `TOGETHER_AI_API_KEY` trong `.env` (apply tại https://api.together.ai/settings/api-keys)
+- [ ] Together AI account có credit (video gen $0.20-1.60+ per clip)
+- [ ] Python 3.10+, internet
+- [ ] Disk space ~5-50MB per video
 
-Skill check pre-conditions ở Step 1. Fail → báo user fix + dừng.
+Skill check pre-conditions ở Step 1.
 
 ## Pipeline — 6 bước
 
-Theo thứ tự, không skip.
-
 ### Step 1 — Pre-check + read API key
 
-Verify `.env` có `GEMINI_API_KEY`:
-```bash
-grep "GEMINI_API_KEY=" .env || grep "GEMINI_API_KEY=" .env.local
-```
-
-Format: key bắt đầu `AIza...` (Google API key format, ~39 chars). Invalid → ask user re-apply tại https://aistudio.google.com/app/apikey.
-
-**KHÁC OAuth Google**: GEMINI_API_KEY là API key đơn giản, KHÔNG cần OAuth flow. Apply 1 click trong AI Studio.
+Verify `.env` có `TOGETHER_AI_API_KEY`. Same key cho cả image + video gen (Together unified API).
 
 ### Step 2 — Gather spec
 
-Nếu user gọi `/generate-video` không có prompt, hỏi 1 message duy nhất:
+Nếu user gọi `/generate-video` không có prompt, hỏi 1 message:
 
 ```
 Mô tả video anh muốn tạo:
 1. Prompt (mô tả scene chi tiết, có audio cues nếu cần)
-2. Model: fast (cheaper) | standard (quality) | lite (cheapest)
-3. Resolution: 720p (default) | 1080p (8s only) | 4k (8s only)
-4. Duration: 4s | 6s | 8s
-5. Aspect: 16:9 (landscape) | 9:16 (vertical/mobile)
+2. Model: veo-3.0-fast (default, $0.80/clip) | veo-3.0 (premium) | sora-2 | kling-2.1-standard (cheaper)
+3. Aspect: 16:9 (landscape, default) | 9:16 (vertical/mobile)
 ```
 
-Nếu user provide prompt qua argument, skip — dùng default (fast + 720p + 8s + 16:9).
+Nếu user provide prompt qua argument, skip — dùng defaults.
 
-Validate:
-- Prompt ≥15 chars
-- 1080p/4k → duration buộc 8s
-- Aspect chỉ 16:9 hoặc 9:16
+Validate prompt ≥15 chars.
 
-### Step 3 — Submit generation request
+### Step 3 — Submit job
 
 Run `scripts/generate.py`:
 ```bash
 python .claude/skills/generating-videos/scripts/generate.py \
-  --prompt "<prompt>" \
-  --model "<model>" \
-  --resolution 720p --duration 8 --aspect 16:9
+  --prompt "<prompt>" --model "<model>" --aspect "<aspect>"
 ```
 
 Script POST tới:
 ```
-https://generativelanguage.googleapis.com/v1beta/models/{model}:predictLongRunning?key=<API_KEY>
+POST https://api.together.xyz/v2/videos
 ```
 
 Body:
 ```json
 {
-  "instances": [{"prompt": "..."}],
-  "parameters": {
-    "aspectRatio": "16:9",
-    "resolution": "720p",
-    "durationSeconds": "8",
-    "personGeneration": "allow_all"
+  "model": "google/veo-3.0-fast",
+  "prompt": "...",
+  "size": "1920x1080"
+}
+```
+
+Response: `{id, status: "in_progress", seconds, size, created_at}`.
+
+### Step 4 — Poll job status
+
+Loop GET `/v2/videos/{id}` mỗi 15s đến status `completed`. Max wait 10 phút.
+
+Latency thực tế:
+- veo-3.0-fast: 30s-4 phút
+- veo-3.0: 2-6 phút
+- sora-2: 1-3 phút
+- kling models: varied
+
+Skill print progress mỗi 30s.
+
+### Step 5 — Download MP4 + save local
+
+Khi `status: completed`, response có:
+```json
+{
+  "outputs": {
+    "cost": 0.8,
+    "video_url": "https://api.together.ai/shrt/..."
   }
 }
 ```
 
-Response: `{"name": "operations/abc123..."}` (operation ID).
-
-### Step 4 — Poll operation status
-
-Loop poll mỗi 10s đến khi `done: true` hoặc timeout 6 phút:
-```
-GET https://generativelanguage.googleapis.com/v1beta/{operation_name}?key=<API_KEY>
-```
-
-Print progress tiếng Việt mỗi 30s:
-```
-[generate] Đang generate video... 30s elapsed (~$0.40 estimated cost)
-```
-
-Latency thực tế:
-- veo-3.1-fast: 11-60s
-- veo-3.1-standard: 60-180s
-- veo-3.1-lite: 30-90s
-
-Timeout 6 phút → fail.
-
-### Step 5 — Download MP4 + save local
-
-Khi `done: true`, response có:
-```json
-{"response": {"generatedVideos": [{"video": {"uri": "gs://...", "mimeType": "video/mp4"}}]}}
-```
-
-URI `gs://` là Google Cloud Storage. Cần dùng Gemini Files API để download:
-```
-GET https://generativelanguage.googleapis.com/v1beta/files/{file_id}?alt=media&key=<API_KEY>
-```
-
-Save to `output/videos/<slug>-<timestamp>.mp4`. Metadata JSON cạnh file.
+Script download URL + save to `output/videos/<slug>-<timestamp>.mp4`. Cũng save metadata JSON với cost + size + duration + job_id.
 
 ### Step 6 — Report
 
 ```
 Video generated successfully:
 
-output/videos/<slug>-20260515.mp4 (8s, 720p, 16:9, ~12MB)
+output/videos/<slug>-20260515.mp4 (8s, 1920×1080, ~14MB)
 
-Audio: included (native VEO 3 audio)
-Cost estimated: ~$0.40
+Model: google/veo-3.0-fast
+Cost: $0.80
+Total time: 3.5 phút
 
 Metadata: output/videos/<slug>-20260515.json
 
-Lưu ý: Server side video retention 2 ngày. Backup local nếu cần lâu hơn.
+Lưu ý: URL Together expire 24h. File đã save local persistent.
 ```
 
 ## Decision points
 
 | Step | Hỏi user khi | Auto-proceed khi |
 |---|---|---|
-| 1 (pre-check) | Key thiếu/sai format | Format OK |
-| 2 (spec) | User chưa cung cấp prompt | Argument provided, apply defaults |
-| 3 (submit) | HTTP 400 invalid params | 200 OK với operation name |
-| 4 (poll) | Timeout 6 phút | done=true |
-| 5 (download) | gs URI fetch fail | Save local OK |
+| 1 (pre-check) | Key thiếu/sai | Format OK |
+| 2 (spec) | User chưa cung cấp prompt | Argument provided |
+| 3 (submit) | HTTP 400 invalid model | 200 với job id |
+| 4 (poll) | Timeout 10 phút | status=completed |
+| 5 (download) | URL fetch fail | Save OK |
 | 6 (report) | N/A | — |
 
 ## Recovery
 
 | Failure | Fix |
 |---|---|
-| `GEMINI_API_KEY` thiếu | Apply tại https://aistudio.google.com/app/apikey, add vào `.env` |
-| HTTP 400 invalid params | 1080p/4k require duration=8 (skill validate trước call) |
-| HTTP 401 invalid key | Re-copy key từ AI Studio, check chưa expire |
-| HTTP 403 billing not enabled | Google Cloud project chưa enable billing — VEO paid model |
-| HTTP 429 quota exceeded | Đợi quota reset (hourly/daily), hoặc apply increase tại Cloud Console |
-| HTTP 500 generation failed | Re-submit (model occasionally fail, latency variance) |
-| Polling timeout 6 phút | VEO occasionally slow — retry sau 5 phút |
-| gs:// URI download fail | Use Files API endpoint `?alt=media` (skill handle) |
-| Prompt content policy | Skip violence, NSFW, real public figures |
+| `TOGETHER_AI_API_KEY` thiếu | Apply tại https://api.together.ai/settings/api-keys |
+| HTTP 401 invalid key | Re-copy key từ dashboard |
+| HTTP 402 insufficient credit | Nạp tiền tại https://api.together.ai/settings/billing |
+| HTTP 400 invalid model | Verify model name từ `references/video-models-comparison.md` |
+| HTTP 429 rate limit | Đợi 60s retry |
+| HTTP 500 internal | Retry sau 30s |
+| Job status `failed` | Re-submit với prompt khác (content policy fail) |
+| Polling timeout 10 phút | Job stuck — re-submit |
+| Download URL 404 | URL expire 24h — script download ngay sau done (handled) |
 
 ## Anti-patterns
 
-- KHÔNG poll faster than 10s (Google rate limit ops queries)
-- KHÔNG cache gs:// URI — expire 2 ngày, download ngay
-- KHÔNG generate >1 video concurrent với cùng API key (queue, hit rate limit)
-- KHÔNG dùng veo-3.1-standard cho draft — dùng -fast hoặc -lite trước, standard chỉ final
-- KHÔNG over-prompt audio details — VEO 3 generate audio tự động, prompt audio cues nhẹ enough
+- KHÔNG poll faster than 15s (rate limit)
+- KHÔNG cache video URL (expire 24h)
+- KHÔNG dùng veo-3.0 (premium) cho draft — dùng veo-3.0-fast hoặc kling cheaper trước
+- KHÔNG share API key (mỗi user/team key riêng)
+- KHÔNG generate >2 video concurrent (queue, hit rate limit)
 
 ## Common pitfalls
 
-1. **1080p/4k buộc duration=8s** — try duration=4 với 1080p → API reject. Skill validate trước.
-2. **Audio không thể disable** — VEO 3 always generate. Nếu cần silent, mute post-process bằng ffmpeg.
-3. **First gen lâu** — VEO model warm up, first call có thể chậm hơn average 30s.
-4. **2-day retention** — server xoá video sau 2 ngày. Backup local hoặc upload Drive ngay.
-5. **Cost surprise** — VEO 3 paid. 720p/8s ~$0.40, 1080p ~$0.80, 4k ~$1.60. Báo user trước.
-6. **Polling burns quota** — mỗi GET operation count vào quota. Poll 10s interval, max 6 phút = 36 polls per gen.
-7. **Audio sync issue rare** — đôi khi audio không match lip nếu prompt người nói. Re-gen thường fix.
+1. **Cost varies model** — veo-3.0-fast $0.80, veo-3.0 ~$1.20, sora-2-pro ~$1.50. Báo user trước khi gen.
+2. **`size` param thay vì `aspect_ratio`** — Together API dùng `size` (vd "1920x1080"), không phải `aspectRatio`. Wrapper handle conversion.
+3. **All VEO models include audio** — VEO 3.0 series có audio (synced sound). Sora 2 cũng có. Kling không.
+4. **URL expire 24h** — Together store temporary. Skill download ngay.
+5. **First gen lâu hơn average** — model warm up, sub gen nhanh hơn.
+6. **Same TOGETHER_AI_API_KEY cho image + video** — unified credit pool.
 
 ## Skill files
 
 | File | Purpose | Khi nào load |
 |---|---|---|
-| `references/veo-models-comparison.md` | 3 VEO variants + pricing + use case | User hỏi "dùng model nào" |
-| `references/prompt-engineering.md` | Tips viết prompt cho VEO (motion + audio cues) | User prompt quality kém |
-| `references/troubleshooting.md` | Errors detail per HTTP code + recovery | Step fail |
+| `references/video-models-comparison.md` | 6 model families: VEO/Sora/Kling/Hailuo/Vidu/Seedance — pricing + use case | User hỏi "dùng model nào" |
+| `references/prompt-engineering.md` | Tips viết prompt cho video models | User prompt quality kém |
+| `references/troubleshooting.md` | Errors detail per HTTP code | Step fail |
 | `scripts/generate.py` | Submit + poll + download + save | Step 3-5 |
-| `scripts/smoke_test.py` | Verify API key + test gen 4s clip | Manual test |
-| `assets/env.template` | Skeleton `.env` với GEMINI_API_KEY | Step 1 (nếu .env không tồn tại) |
+| `scripts/smoke_test.py` | Verify API key + endpoint reachable | Manual test |
+| `assets/env.template` | Skeleton `.env` với TOGETHER_AI_API_KEY | Step 1 |
 
 ## Tiêu chí chất lượng (self-check)
 
 Trước khi report Step 6:
-- [ ] MP4 file tồn tại tại `output/videos/<slug>.mp4`
-- [ ] File size 2-50MB (typical 720p/8s ~10MB, 1080p ~25MB, 4k ~50MB)
-- [ ] Metadata JSON cạnh video, đủ field
-- [ ] Total elapsed time logged (cho user biết cost)
+- [ ] MP4 file exists ở `output/videos/<slug>.mp4`
+- [ ] File size 2-50MB
+- [ ] Metadata JSON đủ field (cost, size, duration, job_id)
+- [ ] Total time logged
 - [ ] Path absolute trong report
 
 ## Voice rules
 
 - Tiếng Việt direct, imperative
 - KHÔNG emoji
-- BÁO COST estimated trước khi call (~$0.40 cho 720p/8s)
-- Note retention 2 ngày (user cần backup nếu giữ lâu)
+- BÁO COST estimated trước call (~$0.80 cho veo-3.0-fast)
+- Note URL expire 24h
 
 ## Sample timing
 
-- Step 1 pre-check: <1s
-- Step 2 gather spec: 30s (user input)
+- Step 1-2: 30s
 - Step 3 submit: <2s
-- Step 4 poll + wait: **11s - 6 phút** (tuỳ model)
-- Step 5 download: 5-30s tuỳ size
+- Step 4 poll: 30s-4 phút (model varies)
+- Step 5 download: 10-30s
 - Step 6 report: <1s
 
-**Total: 30 giây - 6 phút** từ prompt đến MP4 ready. Cost ~$0.40-1.60 per video.
+**Total: 1-5 phút** từ prompt đến MP4 ready. Cost $0.20-1.60 per video.

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""generate.py - submit VEO 3 generation, poll, download MP4, save local.
+"""generate.py - submit Together AI video generation, poll, download MP4.
 
 Usage:
-  python generate.py --prompt "..." [--model X] [--resolution 720p] [--duration 8] [--aspect 16:9]
+  python generate.py --prompt "..." [--model X] [--aspect 16:9]
 
-Reads GEMINI_API_KEY tu .env (priority) hoac .env.local (fallback).
+Reads TOGETHER_AI_API_KEY tu .env (priority) hoac .env.local (fallback).
 Output: <output-dir>/<slug>-<timestamp>.mp4 + .json metadata
 Exit: 0=success, 1=config, 2=API, 3=save, 4=timeout
 """
@@ -20,9 +20,9 @@ from pathlib import Path
 from urllib.error import HTTPError
 
 UA = "Mozilla/5.0 (compatible; ClaudeCode-generating-videos/1.0)"
-API_BASE = "https://generativelanguage.googleapis.com/v1beta"
-POLL_INTERVAL = 10
-MAX_WAIT = 360  # 6 minutes
+API_BASE = "https://api.together.xyz/v2/videos"
+POLL_INTERVAL = 15
+MAX_WAIT = 600  # 10 minutes
 
 
 def find_project_root():
@@ -41,11 +41,11 @@ def load_api_key():
             continue
         for line in path.read_text(encoding="utf-8").splitlines():
             line = line.strip()
-            if line.startswith("GEMINI_API_KEY="):
+            if line.startswith("TOGETHER_AI_API_KEY="):
                 key = line.split("=", 1)[1].strip().strip("\"'")
                 return key, path
-    print(f"[generate] ERROR: GEMINI_API_KEY khong tim thay tai {root}/.env hoac .env.local", file=sys.stderr)
-    print(f"[generate] Apply tai https://aistudio.google.com/app/apikey", file=sys.stderr)
+    print(f"[generate] ERROR: TOGETHER_AI_API_KEY khong tim thay tai {root}/.env hoac .env.local", file=sys.stderr)
+    print(f"[generate] Apply tai https://api.together.ai/settings/api-keys", file=sys.stderr)
     sys.exit(1)
 
 
@@ -58,156 +58,153 @@ def slugify(s, maxlen=50):
     return s[:maxlen]
 
 
-def http_request(url, method="GET", body=None, headers=None):
-    headers = headers or {}
-    headers.setdefault("User-Agent", UA)
-    headers.setdefault("Accept", "application/json")
-    if body:
-        headers.setdefault("Content-Type", "application/json")
-        body = json.dumps(body).encode("utf-8") if not isinstance(body, bytes) else body
-    req = urllib.request.Request(url, data=body, method=method, headers=headers)
-    try:
-        return urllib.request.urlopen(req, timeout=60)
-    except HTTPError as e:
-        body_text = e.read().decode()
-        print(f"[generate] HTTP {e.code}: {body_text[:500]}", file=sys.stderr)
-        raise
-
-
-def submit_generation(api_key, prompt, model, resolution, duration, aspect):
-    url = f"{API_BASE}/models/{model}:predictLongRunning?key={api_key}"
-    body = {
-        "instances": [{"prompt": prompt}],
-        "parameters": {
-            "aspectRatio": aspect,
-            "resolution": resolution,
-            "durationSeconds": str(duration),
-            "personGeneration": "allow_all",
-        },
+def submit_job(api_key, prompt, model, aspect):
+    """POST /v2/videos, return job_id."""
+    body_dict = {
+        "model": model,
+        "prompt": prompt,
     }
-    resp = http_request(url, method="POST", body=body)
-    data = json.loads(resp.read())
-    op_name = data.get("name")
-    if not op_name:
-        print(f"[generate] ERROR: No operation name returned. Response: {data}", file=sys.stderr)
+    # Aspect ratio - Together API can derive from size, or pass directly
+    if aspect == "9:16":
+        body_dict["size"] = "1080x1920"
+    elif aspect == "16:9":
+        body_dict["size"] = "1920x1080"
+
+    body = json.dumps(body_dict).encode("utf-8")
+    req = urllib.request.Request(
+        API_BASE,
+        data=body, method="POST",
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "User-Agent": UA,
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        },
+    )
+    try:
+        resp = urllib.request.urlopen(req, timeout=60)
+        data = json.loads(resp.read())
+        if "id" not in data:
+            print(f"[generate] ERROR: No job id. Response: {data}", file=sys.stderr)
+            sys.exit(2)
+        return data
+    except HTTPError as e:
+        print(f"[generate] Submit HTTP {e.code}: {e.read().decode()[:500]}", file=sys.stderr)
         sys.exit(2)
-    return op_name
 
 
-def poll_operation(api_key, op_name):
-    url = f"{API_BASE}/{op_name}?key={api_key}"
+def poll_job(api_key, job_id):
+    """GET /v2/videos/{id} until completed."""
+    url = f"{API_BASE}/{job_id}"
     start = time.time()
     last_log = start
+    headers = {"Authorization": f"Bearer {api_key}", "User-Agent": UA}
+
     while True:
         elapsed = int(time.time() - start)
         if elapsed > MAX_WAIT:
-            print(f"[generate] TIMEOUT after {MAX_WAIT}s waiting for operation done", file=sys.stderr)
+            print(f"[generate] TIMEOUT {MAX_WAIT}s waiting completion", file=sys.stderr)
             sys.exit(4)
 
         try:
-            resp = http_request(url, method="GET")
+            req = urllib.request.Request(url, headers=headers)
+            resp = urllib.request.urlopen(req, timeout=30)
             data = json.loads(resp.read())
-        except HTTPError:
+        except HTTPError as e:
+            print(f"[generate] Poll HTTP {e.code}, retrying...", file=sys.stderr)
             time.sleep(POLL_INTERVAL)
             continue
 
-        if data.get("done"):
+        status = data.get("status", "?")
+        if status in ("completed", "succeeded", "done", "ready"):
             return data
+        if status in ("failed", "error", "cancelled"):
+            print(f"[generate] Job FAILED: {data}", file=sys.stderr)
+            sys.exit(2)
 
         if time.time() - last_log >= 30:
-            print(f"[generate] Polling... {elapsed}s elapsed", file=sys.stderr)
+            print(f"[generate] Polling... {elapsed}s elapsed (status: {status})", file=sys.stderr)
             last_log = time.time()
 
         time.sleep(POLL_INTERVAL)
 
 
-def download_video(api_key, op_result):
-    """Extract video URI tu operation result + download MP4."""
-    response = op_result.get("response", {})
-    videos = response.get("generatedVideos", [])
-    if not videos:
-        print(f"[generate] ERROR: No videos in response: {op_result}", file=sys.stderr)
-        sys.exit(2)
-    video_info = videos[0].get("video", {})
-    file_uri = video_info.get("uri", "")
-    if not file_uri:
-        print(f"[generate] ERROR: No URI in video: {video_info}", file=sys.stderr)
-        sys.exit(2)
-
-    # URI format: e.g. "files/abc123" or "gs://..."
-    # For Gemini Files API: files/{file_id}, download via:
-    if file_uri.startswith("files/"):
-        download_url = f"{API_BASE}/{file_uri}?alt=media&key={api_key}"
-    else:
-        print(f"[generate] WARN: Unexpected URI format: {file_uri}", file=sys.stderr)
-        download_url = file_uri
-
+def download_video(url, dest_path):
+    req = urllib.request.Request(url, headers={"User-Agent": UA})
     try:
-        req = urllib.request.Request(download_url, headers={"User-Agent": UA})
-        with urllib.request.urlopen(req, timeout=120) as resp:
-            return resp.read()
-    except HTTPError as e:
-        print(f"[generate] Download HTTP {e.code}: {e.read().decode()[:300]}", file=sys.stderr)
+        with urllib.request.urlopen(req, timeout=180) as resp:
+            data = resp.read()
+        dest_path.parent.mkdir(parents=True, exist_ok=True)
+        dest_path.write_bytes(data)
+        return len(data)
+    except Exception as e:
+        print(f"[generate] Download error: {e}", file=sys.stderr)
         sys.exit(3)
 
 
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--prompt", required=True)
-    p.add_argument("--model", default="veo-3.1-fast-generate-preview")
-    p.add_argument("--resolution", default="720p", choices=["720p", "1080p", "4k"])
-    p.add_argument("--duration", type=int, default=8, choices=[4, 6, 8])
+    p.add_argument("--model", default="google/veo-3.0-fast",
+                   help="google/veo-3.0-fast, google/veo-3.0, google/veo-3.0-audio, openai/sora-2, kwaivgI/kling-2.1-standard, etc.")
     p.add_argument("--aspect", default="16:9", choices=["16:9", "9:16"])
     p.add_argument("--output-dir", default="output/videos")
     args = p.parse_args()
 
-    # Validate constraints
-    if args.resolution in ("1080p", "4k") and args.duration != 8:
-        print(f"[generate] ERROR: {args.resolution} requires duration=8 (API constraint). Got {args.duration}.", file=sys.stderr)
-        sys.exit(1)
     if len(args.prompt) < 15:
-        print("[generate] ERROR: Prompt qua ngan (<15 chars). Cung cap mo ta chi tiet hon.", file=sys.stderr)
+        print("[generate] ERROR: Prompt qua ngan (<15 chars).", file=sys.stderr)
         sys.exit(1)
 
     api_key, env_path = load_api_key()
     print(f"[generate] API key loaded tu {env_path.name}", file=sys.stderr)
-    print(f"[generate] Submitting {args.model} ({args.resolution}, {args.duration}s, {args.aspect})...", file=sys.stderr)
+    print(f"[generate] Submitting {args.model} (aspect {args.aspect})...", file=sys.stderr)
 
-    op_name = submit_generation(api_key, args.prompt, args.model, args.resolution, args.duration, args.aspect)
-    print(f"[generate] Operation: {op_name}", file=sys.stderr)
-    print(f"[generate] Waiting for completion (typical: fast=11-60s, standard=60-180s, lite=30-90s)...", file=sys.stderr)
+    job = submit_job(api_key, args.prompt, args.model, args.aspect)
+    job_id = job["id"]
+    print(f"[generate] Job: {job_id}", file=sys.stderr)
+    print(f"[generate] Size: {job.get('size','?')}, duration: {job.get('seconds','?')}s", file=sys.stderr)
+    print(f"[generate] Waiting (typical 30s-4min)...", file=sys.stderr)
 
-    op_result = poll_operation(api_key, op_name)
-    print(f"[generate] Operation done. Downloading MP4...", file=sys.stderr)
+    result = poll_job(api_key, job_id)
 
-    video_bytes = download_video(api_key, op_result)
-    if len(video_bytes) < 100_000:  # <100KB suspicious
-        print(f"[generate] WARN: Video size unusually small ({len(video_bytes)}B)", file=sys.stderr)
+    outputs = result.get("outputs", {})
+    video_url = outputs.get("video_url", "")
+    cost = outputs.get("cost", None)
+    if not video_url:
+        print(f"[generate] ERROR: No video_url in result: {result}", file=sys.stderr)
+        sys.exit(2)
+
+    elapsed_total = int(time.time() - job["created_at"]) if "created_at" in job else "?"
+    print(f"[generate] Completed in ~{elapsed_total}s. Cost: ${cost if cost else '?'}", file=sys.stderr)
+    print(f"[generate] Downloading {video_url}...", file=sys.stderr)
 
     root = find_project_root()
     out_dir = root / args.output_dir
-    out_dir.mkdir(parents=True, exist_ok=True)
     slug = slugify(args.prompt)
     timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     base = f"{slug}-{timestamp}"
     mp4_path = out_dir / f"{base}.mp4"
     meta_path = out_dir / f"{base}.json"
 
-    mp4_path.write_bytes(video_bytes)
+    size = download_video(video_url, mp4_path)
     meta = {
         "prompt": args.prompt,
         "model": args.model,
-        "resolution": args.resolution,
-        "duration_seconds": args.duration,
         "aspect_ratio": args.aspect,
-        "operation_name": op_name,
-        "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        "file_size_bytes": len(video_bytes),
+        "size": result.get("size", "?"),
+        "duration_seconds": result.get("seconds", "?"),
+        "job_id": job_id,
+        "cost_usd": cost,
+        "created_at": result.get("created_at"),
+        "completed_at": result.get("completed_at"),
+        "video_url_original": video_url,
+        "saved_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "file_size_bytes": size,
     }
     meta_path.write_text(json.dumps(meta, indent=2, ensure_ascii=False), encoding="utf-8")
 
-    print(f"[generate] OK: {mp4_path} ({len(video_bytes)/1024/1024:.1f}MB)", file=sys.stderr)
-    print(json.dumps({"video": str(mp4_path), "metadata": str(meta_path), "size_bytes": len(video_bytes)}, ensure_ascii=False))
+    print(f"[generate] OK: {mp4_path} ({size/1024/1024:.1f}MB)", file=sys.stderr)
+    print(json.dumps({"video": str(mp4_path), "metadata": str(meta_path), "size_bytes": size, "cost_usd": cost}, ensure_ascii=False))
 
 
 if __name__ == "__main__":

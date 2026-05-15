@@ -1,47 +1,46 @@
-# EVALS — generating-videos
+# EVALS — generating-videos (Together AI)
 
-3 scenarios để test skill. Chạy ở phiên Claude Code mới. **Note**: full eval gen video sẽ tốn ~$0.30-1.20 mỗi lần (VEO 3 paid). Dùng `--dry-run` cho test không tốn.
+3 scenarios. Full eval tốn ~$0.40-0.80 mỗi lần (Together AI paid). Dùng `--dry-run` cho test free.
 
-## Eval 1: Golden path — Generate single video
+## Eval 1: Golden path — Generate VEO 3 fast video
 
-**Tên scenario**: User cung cấp prompt rõ ràng, dùng default fast model
+**Tên scenario**: User cung cấp prompt rõ ràng, default veo-3.0-fast
 
 **Precondition**:
-- `.env` có `GEMINI_API_KEY` valid (format `AIza*`)
-- Google Cloud project có Gemini API enabled + billing active
+- `.env` có `TOGETHER_AI_API_KEY` valid
+- Together account có credit ≥$1
 - Python 3.10+, internet
-- Disk space ~15MB
+- Disk space ~20MB
 
 **User input**:
 ```
-/generate-video Wide shot of a tropical beach at sunset, gentle waves rolling onto white sand, camera slowly pans right, golden hour lighting, ocean ambient sounds
+/generate-video Wide shot of a tropical beach at sunset, gentle waves rolling onto white sand, camera slowly pans right, golden hour lighting
 ```
 
 **Expected behavior**:
-1. Skill triggered, prompt parsed
-2. Step 1: pre-check GEMINI_API_KEY OK
-3. Step 2: Skip ask (prompt provided), apply defaults (fast + 720p + 8s + 16:9)
-4. Step 3: POST predictLongRunning → operation name returned
-5. Step 4: Poll 10s interval, print progress every 30s, ~11-60s total
-6. Step 5: Download MP4 to `output/videos/<slug>-<timestamp>.mp4`
-7. Step 6: Report with absolute path + cost estimated (~$0.30) + retention note
+1. Skill triggered
+2. Step 1 pre-check key OK
+3. Step 2 skip ask (argument provided), apply defaults (veo-3.0-fast + 16:9)
+4. Step 3 POST /v2/videos → job id returned
+5. Step 4 poll 15s interval, ~30s-4min total
+6. Step 5 download MP4 → `output/videos/<slug>.mp4`
+7. Step 6 report path + cost (~$0.80) + size
 
 **Pass criteria**:
-- [ ] MP4 file exists at reported path
-- [ ] File size 2-50MB (typical 720p/8s ~10MB)
-- [ ] Metadata JSON cạnh video với đủ fields
-- [ ] Total time ≤2 phút (fast model expectation)
-- [ ] Audio present trong video (VEO 3 always gen)
-- [ ] Cost estimate printed trước/sau call
-- [ ] Retention 2-day note included
+- [ ] MP4 file exists ở reported path
+- [ ] Size 10-30MB (typical 8s/1920×1080)
+- [ ] Metadata JSON đủ field (model, cost, size, duration, job_id)
+- [ ] Total time ≤5 phút
+- [ ] Audio present (VEO 3 always)
+- [ ] Cost reported
 
 ---
 
-## Eval 2: Edge case — User chưa setup GEMINI_API_KEY
+## Eval 2: Edge case — TOGETHER_AI_API_KEY chưa setup
 
-**Tên scenario**: Fresh repo, key chưa apply
+**Tên scenario**: Fresh repo, key thiếu
 
-**Precondition**: `.env` không có `GEMINI_API_KEY`
+**Precondition**: `.env` không có `TOGETHER_AI_API_KEY`
 
 **User input**:
 ```
@@ -51,45 +50,43 @@
 **Expected behavior**:
 1. Step 1 detect missing key
 2. Báo user CỤ THỂ:
-   - URL apply key: https://aistudio.google.com/app/apikey
-   - Cần Gemini API enabled + billing trên Cloud project
-   - Format `AIza...`
+   - URL apply: https://api.together.ai/settings/api-keys
+   - Note paid (~$0.30-1.50/clip)
 3. Dừng — KHÔNG call API
-4. KHÔNG tạo file rác
 
 **Pass criteria**:
-- [ ] Detect missing key (không silent fail)
-- [ ] Error message có URL + billing warning
+- [ ] Detect missing key
+- [ ] Error có URL + cost note
 - [ ] Exit code != 0
 - [ ] No file created
 
 ---
 
-## Eval 3: Anti-pattern — Invalid params (1080p với 4s duration)
+## Eval 3: Anti-pattern — Invalid model name
 
-**Tên scenario**: User config sai constraint VEO 3 (1080p/4k buộc duration=8)
+**Tên scenario**: User truyền model name sai (thiếu provider prefix)
 
-**Precondition**: Setup OK, API key valid
+**Precondition**: Key valid
 
 **User input**:
 ```
-/generate-video tropical beach sunset --resolution 1080p --duration 4
+/generate-video tropical beach --model "veo-3.0-fast"
 ```
 
 **Expected behavior**:
-1. Step 2 spec validation
-2. DETECT vi phạm constraint: 1080p requires duration=8
-3. Báo user CỤ THỂ:
-   - "1080p/4k yêu cầu duration=8 (API limit)"
-   - Suggest: dùng duration=8, hoặc switch resolution=720p
-4. KHÔNG submit request → KHÔNG tốn cost
-5. Wait user fix or override
+1. Skill submit job
+2. API trả HTTP 400 "invalid model" (đúng phải `google/veo-3.0-fast`)
+3. Skill báo user:
+   - Model name sai format
+   - Correct format `<provider>/<model>` (vd `google/veo-3.0-fast`)
+   - Reference `references/video-models-comparison.md` cho full list
+4. KHÔNG retry với placeholder
 
 **Pass criteria**:
-- [ ] Detect constraint violation TRƯỚC khi call API
-- [ ] Error message rõ constraint + suggest fix
-- [ ] KHÔNG tốn cost (chưa call submit)
-- [ ] Exit code != 0
+- [ ] Detect 400 error
+- [ ] Suggest correct format
+- [ ] Reference docs trỏ rõ
+- [ ] No file created (job fail trước download)
 
 ---
 
@@ -97,29 +94,21 @@
 
 ### Manual test
 
-1. Tạo test repo (vd `~/test-veo-video/`)
-2. Copy `.claude/skills/generating-videos/` vào
-3. Setup `.env` với `GEMINI_API_KEY` (Eval 1, 3) hoặc empty (Eval 2)
+1. Tạo test repo
+2. Copy skill vào
+3. Setup `.env` với key (Eval 1, 3) hoặc empty (Eval 2)
 4. Mở phiên Claude Code mới
-5. Chạy 3 scenarios theo precondition
-6. Tick Pass criteria
+5. Run scenarios
 
-### Cost-aware testing
+### Cost-aware
 
-- Eval 1: tốn ~$0.30 (1 video fast 720p/8s)
-- Eval 2: $0 (không call API)
-- Eval 3: $0 (validate fail trước call)
+- Eval 1: ~$0.80 (1 veo-3.0-fast)
+- Eval 2: $0
+- Eval 3: $0 (fail trước submit, hoặc job fail immediately)
 
-**Total cost full eval suite: ~$0.30**.
+**Total: ~$0.80 full suite**.
 
-### Dry-run mode (tiết kiệm)
-
-Skip Eval 1 nếu không muốn tốn cost — dùng `smoke_test.py --dry-run` thay:
-```bash
-python .claude/skills/generating-videos/scripts/smoke_test.py --dry-run
-```
-
-Verify API key + endpoint reachable, không gen video.
+Cheap variant: replace Eval 1 model với `kwaivgI/kling-2.1-standard` ($0.40) hoặc `vidu/vidu-q1` ($0.30).
 
 ---
 
@@ -127,4 +116,4 @@ Verify API key + endpoint reachable, không gen video.
 
 | Date | Skill version | Eval 1 | Eval 2 | Eval 3 | Notes |
 |---|---|---|---|---|---|
-| 2026-05-15 | v0.1 | NOT TESTED | NOT TESTED | NOT TESTED | Initial release — cần GEMINI_API_KEY để test E2E. Chưa có trong .env.local — pending. |
+| 2026-05-15 | v0.2 (Together AI) | PASS (real test) | NOT TESTED | NOT TESTED | Real test: VEO 3.0 fast beach video 8s 1920×1080 13.8MB $0.80 — 218s total |

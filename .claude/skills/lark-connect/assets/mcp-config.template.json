@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "lark-mcp": {
+      "command": "python",
+      "args": [".claude/skills/lark-connect/scripts/lark_mcp_runner.py"]
+    }
+  }
+}

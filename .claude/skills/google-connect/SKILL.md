@@ -177,6 +177,40 @@ Test ngay bằng cách hỏi Claude:
 Nếu sau này gặp lỗi 401 / invalid_grant, hook sẽ tự mở browser cho bạn re-auth.
 ```
 
+## Decision points
+
+Tổng hợp các điểm skill phải dừng/hỏi user vs auto-proceed:
+
+| Step | Hỏi user khi | Auto-proceed khi |
+|---|---|---|
+| 1 (pre-check) | Python <3.8 hoặc cài pip fail | Python + packages OK |
+| 2 (Cloud Console) | User chưa có Cloud project | User confirm "đã có credentials" |
+| 3 (.env) | CLIENT_ID/SECRET fail format validation | Format match regex |
+| 4 (OAuth flow) | `oauth_refresh.py` exit code ≠ 0 | Exit code 0 + .env có GOOGLE_REFRESH_TOKEN |
+| 5 (install hook) | `install.py` báo fail trên copy hoặc patch settings | Exit code 0 + 3 files đúng vị trí |
+| 6 (smoke test) | Exit code ≠ 0 (401/403/network) | Exit code 0 |
+| 7 (report) | N/A — luôn output | — |
+
+## Recovery
+
+Khi step fail, skill làm theo thứ tự:
+
+1. **Đọc error message stderr** — script in ra error cụ thể (HTTP code, missing var, port conflict)
+2. **Tra `references/troubleshooting.md`** mục tương ứng step — có 10+ common errors + fix
+3. **Báo user fix root cause** — KHÔNG suggest workaround (vd: thay vì skip step, fix Cloud Console)
+4. **Retry step** từ đầu sau khi user fix
+
+Common recovery:
+| Failure | Fix |
+|---|---|
+| Step 1 — `python` không tìm thấy | Cài Python 3.10+ từ python.org, tick "Add to PATH" |
+| Step 2 — User stuck ở Cloud Console | Đọc `references/google-cloud-setup.md` sub-step tương ứng |
+| Step 3 — Format CLIENT_ID sai | Quay lại Cloud Console → Credentials → click client → copy lại |
+| Step 4 — "Access blocked" | Add email user vào Test users của OAuth consent screen |
+| Step 4 — Port 8080 busy | Sửa `PORT = 8090` trong `oauth_refresh.py` |
+| Step 5 — settings.local.json conflict | Manual edit theo template trong `troubleshooting.md` |
+| Step 6 — 401/403 smoke test | Verify scopes đã grant + APIs enabled |
+
 ## Anti-patterns
 
 - KHÔNG hard-code GOOGLE_CLIENT_ID hoặc CLIENT_SECRET trong scripts — luôn đọc từ `.env`

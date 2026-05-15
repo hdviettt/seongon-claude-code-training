@@ -2,6 +2,16 @@
 
 Scope = quyền truy cập. Skill mặc định request 3 scope. Đọc khi muốn hiểu mỗi cái cho phép gì hoặc thêm scope mới.
 
+## Contents
+- [3 Scope Default](#3-scope-default)
+  - [spreadsheets](#httpswwwgoogleapiscomauthspreadsheets)
+  - [drive](#httpswwwgoogleapiscomauthdrive)
+  - [documents](#httpswwwgoogleapiscomauthdocuments)
+- [Cách thêm scope](#cách-thêm-scope)
+- [Common Google API Scopes Reference](#common-google-api-scopes-reference)
+- [Security note](#security-note)
+- [Khi nào dùng OAuth user flow vs Service Account](#khi-nào-dùng-oauth-user-flow-vs-service-account)
+
 ## 3 Scope Default
 
 ### `https://www.googleapis.com/auth/spreadsheets`
